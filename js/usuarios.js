@@ -219,7 +219,7 @@ console.log(listaUsuario);
 
 
 function goIndex() {
-    window.location.replace(window.location.pathname+"../");
+    window.location.replace("../");
 }
 
 
