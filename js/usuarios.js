@@ -219,7 +219,7 @@ console.log(listaUsuario);
 
 
 function goIndex() {
-    window.location.replace("../");
+    window.location.replace(window.location.pathname+"../");
 }
 
 
@@ -229,7 +229,7 @@ function mostrar(){
 }
 
 function goLogin() {
-    window.location.replace("login.html");
+    window.location.replace("./login.html");
 }
 
 document.getElementById("login").onclick = goLogin;
