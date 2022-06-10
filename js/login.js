@@ -1,61 +1,47 @@
-/** 
+
 class Nodo{
-    constructor(usuario){
-        this.usuario = usuario;
+    constructor(_usuario){
+        this.usuario = _usuario;
         this.siguiente = null;
     }
-
 }
- class Usuario{
-    constructor(dpi, nombre_completo, nombre_usuario, correo, rol, contrasenia, telefono){
-        this.dpi = dpi;
-        this.nombre_completo = nombre_completo;
-        this.nombre_usuario = nombre_usuario;
-        this.correo = correo;
-        this.rol = rol;
-        this.contrasenia = contrasenia;
-        this.telefono = telefono;
-
-    }
-
-} 
 
 
 
 
 class ListaUsuarios{
     constructor(){
-        this.cabeza = null;
+        this.cabeza = new Nodo( {
+            "dpi":2354168452525, 
+            "nombre_completo": "WIlfred Perez", 
+            "nombre_usuario": "Wilfred",
+            "correo":"",
+            "rol":  "Administrador",
+            "contrasenia": "123",
+            "telefono": "+502 (123) 123-4567"});
+
+        localStorage.setItem("lsUsers", JSON.stringify(this));
     }
 
-    add(usuario){
-        var tempo = new Nodo(usuario);
-        
-        tempo.siguiente = this.cabeza;
-        this.cabeza = tempo;
-        
-        
-        
-    }
-
-    verificarUserYPass(user, pass){
+    verificarUserYPass(){
+        var user = document.getElementById("nombre_usuario").value;
+        var pass = document.getElementById("contrasenia").value;
         var temporal = this.cabeza;
         var resultado = false;
-
+        
         while(temporal!=null){  
             
             if (temporal.usuario.nombre_usuario == user) {
-                console.log("user: "+temporal.usuario.nombre_usuario);
                 if (temporal.usuario.contrasenia == pass) {
-                    console.log("pass: "+temporal.usuario.contrasenia);
                     resultado = true;
-                    alert("Login Exitoso"+temporal.usuario.nombre_usuario )
                 }
             }
             temporal = temporal.siguiente;
         }
         if (resultado) {
             alert("Login Exitoso ")
+            localStorage.setItem("logeado", "true" );
+            goIndex();
         } else {
             alert("Login Error")
         }
@@ -63,51 +49,38 @@ class ListaUsuarios{
 
     mostrarListaUsuarios(){
         var temporal = this.cabeza;
-        console.log("mostrar: ");
+
         while (temporal!=null) {
-            console.log("mostrar: "+temporal.usuario.dpi);
+            console.log(temporal);
             temporal = temporal.siguiente;
         }
+
+
         
     }
 
-}
-*/
 
-document.getElementById("cancelbtn").onclick = goIndex;
+
+}
+
+
+
 
 function goIndex() {
     window.location.replace("../");
 }
 
 
-
-document.getElementById("btnLogin").onclick = validarLogin;
-
-function validarLogin() {
-    
-    var user = document.getElementById("nombre_usuario").value;
-    var pass = document.getElementById("contrasenia").value;
-    var correcto = false
-    fetch('../json/usuarios.json')
-    .then(respuesta => respuesta.json())
-    .then(usuarios => {
-        usuarios.forEach(usuario => {
-            if (usuario.nombre_usuario == user) 
-                if (usuario.contrasenia == pass) 
-                    correcto = true;
-        });
-        
-        if (correcto) {
-            alert("Login Exitoso" )
-            goIndex();
-        } else {
-            alert("contrasenia incorrecta")
-        }
-        
-    });  
-
-    
-
+function verificar(){
+    listaUsuario.verificarUserYPass();
 }
+
+var listaUsuario = JSON.parse(localStorage.getItem("lsUsers"));
+if (listaUsuario == null) 
+    listaUsuario = new ListaUsuarios();
+
+
+document.getElementById("cancelbtn").onclick = goIndex;
+
+document.getElementById("btnLogin").onclick = verificar;
 
