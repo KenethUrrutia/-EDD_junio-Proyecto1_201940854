@@ -4,37 +4,84 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./index.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     
     <title>Index</title>
 </head>
 <body>
-    <!-- nav -->
+    <script src="//d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
+    <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+
+    
     <nav class="nav">
         <ul>
-          <li><a class="active" href="./"> <i class="bi bi-house-fill"></i> Inicio</a></li>
-          <li><a  href="./html/usuarios.html"> <i class="bi bi-people-fill"></i> Usuarios</a></li>
-          <li><button  class="login" id="login" > <i class="bi bi-box-arrow-in-right"></i> Login</button></li>
-          
+          <li><button  class="active" id="btn-index" > <i class="bi bi-house-fill"></i> Inicio</button></li>
+          <li><button  id="btn-usuarios" ><i class="bi bi-people-fill"></i> Usuarios</button></li>
+          <li><button  id="btn-tops" ><i class="bi bi-award"></i> Tops</button></li>
+          <li><button   id="btn-login"  > <i class="bi bi-box-arrow-in-right"></i> Login</button></li>
+          <li><button   id="btn-logout"  >  </button></li>
         </ul>
         
     </nav>
 
-    <div class="container-libros">
+
+
+    <div id="div-login" class="ventana">
+        <form  >
+            <div class="container">
+              <label for="nombre_usuario"><b>Nombre de Usuario</b></label>
+              <input type="text" placeholder="Ingrese nombre de usuario" id="nombre_usuario" required>
+          
+              <label for="contrasenia"><b>Contraseña</b></label>
+              <input type="password" placeholder="Ingrese contraseña" id="contrasenia" required>
+          
+              <button type="button"  id="btnLogear">Login</button>
+              
+            </div>
+          
+            <div class="container" style="background-color:#f1f1f1">
+              <button id="cancelbtn" type="button" class="cancelbtn">Cancel</button>
+            </div>
+            
+        </form>
+    </div>
+
+
+    <div id="div-todosLibros"  class="ventana">
         <div class="separador-libros">
             <h1>Libros Disponibles</h1>
             <button id="atoz"> A-Z</button>
             <button id="ztoa"> Z-A</button>
         </div>
         <div class="div-tabla">
-            <div id="tabla">
+            <div id="tabla-libros">
     
             </div>
         </div>
     </div>
     
 
-    <script type="module" src="./js/index.js"></script>
+    <div id="div-usuarios" class="ventana">
+        <div class="div-tabla">
+            <div id="tabla-usuarios">
+    
+            </div>
+        </div>
+        <br><br>
+        <div id="lista-listas"></div>
+        <div class="container" style="background-color:#f1f1f1">
+            <button id="cargaMasiva" type="button" class="cancelbtn">Carga Masiva</button>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <script  src="./index.js"></script>
 </body>
 </html>

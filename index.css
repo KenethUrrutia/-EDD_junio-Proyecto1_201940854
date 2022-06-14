@@ -4,24 +4,38 @@
 
 }
 
+
+/*#region nav*/
 .nav li {
     float: left;
     border-right: 1px solid rgb(255, 255, 255);
 }
-.nav #login {
+.nav #btn-login {
     float: right;
     border-right: 1px solid rgb(255, 255, 255);
     display: block; 
     color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
     font-size: large;
     background-color: #2b2b2b;
     margin: 0;
 }
-.nav #login:hover {
+.nav #btn-logout {
+    float: right;
+    border-right: 1px solid rgb(255, 255, 255);
+    display: block; 
+    color: white;
+    font-size: large;
+    background-color: #2b2b2b;
+    margin: 0;
+}
+.nav #btn-login:hover {
     background-color:  #424141;
+    margin: 0;
+    cursor: pointer;
+}
+.nav #btn-logout:hover {
+    background-color:  #424141;
+    margin: 0;
     cursor: pointer;
 }
 .nav ul {
@@ -33,25 +47,22 @@
     width: 100%;
 }
   
-.nav li a {
-    display: block; 
+.nav li button {
+    margin: 0;
+    float: right;
     color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
     font-size: large;
 }
-.nav li a:hover {
-    background-color:  rgb(25, 150, 0);
-}
+
 .nav .active {
     background-color: #055c02;
   }
 
+/*#endregion*/
 
 
 
-
+/*#region tabla */
   
 .tabla-tabla{
     border-collapse: collapse;
@@ -111,8 +122,9 @@ tr:hover td{
     color: #271700;
 }
 
+/*#endregion*/
 
-
+/*#region vista todos los libros*/
 .separador-libros{
     width: 100%;
     height: 120px;
@@ -137,4 +149,100 @@ tr:hover td{
     cursor: pointer;
     background-color: #f58c02;
 
+}
+
+/*#endregion*/
+
+
+
+/*#region Login*/
+form {
+    border: 3px solid #f1f1f1;
+}
+  
+
+input[type=text], input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+  
+
+  
+button:hover {
+    opacity: 0.8;
+}
+  
+.cancelbtn {
+    width: auto;
+    padding: 10px 18px;
+    background-color: #f44336;
+}
+  
+/*#endregion*/
+
+
+
+
+/*#region Lista Listas Usuarios*/
+
+
+
+
+
+#lista-listas{
+    width: 1000px;
+    height: 400px;
+    background-color: aqua;
+}
+
+
+button {
+    background-color: #04AA6D;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+  
+button:hover {
+    opacity: 0.8;
+}
+  
+.cancelbtn {
+    width: auto;
+    padding: 10px 18px;
+    background-color: #f44336;
+}
+.otro {
+    width: auto;
+    padding: 10px 18px;
+    background-color: #17c200;
+}
+  
+
+/*#endregion*/
+
+
+
+
+/*#region Ocultar divs*/
+.div_oculto{
+    opacity: 0;
+}
+.div_activo{
+    opacity: 100%;
+}
+/*#endregion*/
+
+
+.pilaEj{
+background-color:transparent;
+width: 10px;
+height: 50px;
 }

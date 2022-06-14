@@ -1,1 +1,0 @@
-//script para mostrar el top de personas con más libros comprados (Lista doblemente enlazada). 
