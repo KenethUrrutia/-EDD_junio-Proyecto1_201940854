@@ -161,7 +161,48 @@ class ListaUsuarios{
     }
 
 
+    sizeLibro(_nombreUsuario){
+        var cont = 0;
+
+        var temporal = this.cabeza;
+        while (temporal != null){
+            if(temporal.usuario.nombre_usuario == _nombreUsuario){       
+                var tempoLibro = temporal.abajo;
+                while(tempoLibro != null){
+                    cont++;
+                    console.log(cont);
+                    tempoLibro = tempoLibro.siguiente;
+                }
+                return cont;
+            }
+            temporal = temporal.siguiente;
+        }
+        if(temporal == null){
+            console.log("No se pudo encontrar el usuario solicitado: "+_nombreUsuario)
+        }
+        return cont
+    }
+
 }
+
+function tabla(){
+    var element = document.getElementById("tabla");
+    var textoHTML = `<TABLE class="tabla-tabla" >
+                    <TR><TH>Nombre Usuario</TH><TH>Nombre Completo</TH><TH>Rol</TH><TH>Libro Comprados</TH></TR>`;
+    var temporal = listaUsuario.cabeza;
+
+    while (temporal != null){
+        textoHTML += `<TR><TD>` +temporal.usuario.nombre_usuario+`</TD> <TD>`
+                                +temporal.usuario.nombre_completo+`</TD> <TD>`
+                                +temporal.usuario.rol+`</TD> <TD> `
+                                +listaUsuario.sizeLibro(temporal.usuario.nombre_usuario)+`</TD></TR>`;
+        temporal = temporal.siguiente;
+    }
+    textoHTML += `</TABLE>`;
+    element.innerHTML = textoHTML;
+}
+
+
 
 
 
@@ -214,6 +255,7 @@ listaUsuario.mostrarListaUsuarios();
 listaUsuario.graficar();
 console.log(listaUsuario);
 
+tabla();
 
 
 
@@ -234,9 +276,8 @@ function goLogin() {
 
 document.getElementById("login").onclick = goLogin;
 
-document.getElementById("cargaMasiva").onclick = cargar;
+//document.getElementById("cargaMasiva").onclick = cargar;
 
-document.getElementById("mostrar").onclick = mostrar;
 
 /**
  * 

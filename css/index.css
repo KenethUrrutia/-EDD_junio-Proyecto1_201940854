@@ -49,3 +49,92 @@
   }
 
 
+
+
+
+  
+.tabla-tabla{
+    border-collapse: collapse;
+    text-align: center;
+    vertical-align: center;
+    padding: 3px;
+    margin: 15px;
+    
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.tabla-tabla td{
+    border-collapse: collapse;
+    text-align: center;
+    vertical-align: center; 
+    padding: 3px;
+    margin: 15px;
+    
+    padding-left: 30px;
+    padding-right: 30px;
+}
+.tabla-tabla th{
+    border-collapse: collapse;
+    text-align: center;
+    vertical-align: center;
+    padding: 3px;
+    margin: 15px;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+table{
+	background-color: white;
+	text-align: left;
+}
+
+th, td{
+	padding: 20px;
+}
+
+th{
+	background-color: #246355;
+	color: white;
+}
+
+tr:nth-child(even){
+	background-color: #ddd;
+}
+
+tr:hover td{
+	background-color: #369681;
+	color: white;
+}
+
+.svg{
+    color: #271700;
+}
+
+
+
+.separador-libros{
+    width: 100%;
+    height: 120px;
+    background-color: #077c25;
+    margin-top: 5%;
+}
+.separador-libros h1{
+    color: rgb(255, 255, 255);
+    background-color: #077c25;
+    margin-top: 5%;
+    padding: 15px;
+}
+.separador-libros button{
+    margin-left: 4%;
+    color: rgb(255, 255, 255);
+    background-color: #dd7d00;
+    width: 60px;
+    padding: 0.5%;
+    font-stretch: ultra-expanded;
+}
+.separador-libros button:hover{
+    cursor: pointer;
+    background-color: #f58c02;
+
+}
