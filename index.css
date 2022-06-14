@@ -198,6 +198,11 @@ button:hover {
     height: 400px;
     background-color: aqua;
 }
+#lienzo-TopClientes{
+    width: 1000px;
+    height: 400px;
+    background-color: aqua;
+}
 
 
 button {
