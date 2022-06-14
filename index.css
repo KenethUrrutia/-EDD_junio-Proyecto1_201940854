@@ -199,11 +199,21 @@ button:hover {
     background-color: aqua;
 }
 #lienzo-TopClientes{
+        
+    margin-left: auto;
+    margin-right: auto;
     width: 1000px;
-    height: 400px;
+    height: 200px;
     background-color: aqua;
 }
-
+#lienzo-topLibros{
+        
+    margin-left: auto;
+    margin-right: auto;
+    width: 1000px;
+    height: 200px;
+    background-color: aqua;
+}
 
 button {
     background-color: #04AA6D;
@@ -250,4 +260,17 @@ button:hover {
 background-color:transparent;
 width: 10px;
 height: 50px;
+}
+
+.separador-X{
+    width: 100%;
+    height: 75px;
+    background-color: #077c25;
+    margin-top: 5%;
+}
+.separador-X h1{
+    color: rgb(255, 255, 255);
+    background-color: #077c25;
+    margin-top: 5%;
+    padding: 15px;
 }

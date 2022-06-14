@@ -1,3 +1,6 @@
+
+
+//#region Clases Nodos
 class NodoTopUsuario{
     constructor(_usuario){
         this.id = 0
@@ -8,7 +11,17 @@ class NodoTopUsuario{
 
 }
 
-//#region Clases Nodos
+class NodoTopLibro{
+    constructor(libro){
+        this.id = 0
+        this.libro = libro;
+        this.siguiente = null;
+        this.abajo = null;
+        this.vendidos = 1;
+    }
+
+}
+
 class NodoUsuario{
     constructor(_usuario){
         this.id = 0
@@ -134,14 +147,33 @@ class ListaListasUsuariosLibros{
                 etiquetas += `nullUS`+temporalUsuario.id + `[label = "null" , shape= none];\n`;
                 conexiones += `U`+temporalUsuario.id + ` -> nullUS`+temporalUsuario.id+ `;\n`
 
+                temporalLibro = temporalUsuario.abajo;
 
+                while (temporalLibro != null) {
 
-                
+                    etiquetas += `U`+temporalUsuario.id+`L`+temporalLibro.id + ` [label = "`+temporalLibro.libro.nombre_libro+`" ];\n`;
+                    rankUsuario += `U`+temporalUsuario.id+`L`+temporalLibro.id+`; `;
+
+                    if (temporalLibro.siguiente != null) {
+                        
+                        conexiones += `U`+temporalUsuario.id+`L`+temporalLibro.id +` -> U`+temporalUsuario.id+`L`+temporalLibro.siguiente.id +`;\n`
+
+                    } else {
+                        rankUsuario += `nullU`+temporalUsuario.id+ `LS`+temporalLibro.id+`; `;
+                        etiquetas += `nullU`+temporalUsuario.id+ `LS`+temporalLibro.id+ `[label = "null" , shape= none];\n`;
+                        conexiones += `U`+temporalUsuario.id+`L`+temporalLibro.id +` -> nullU`+temporalUsuario.id+ `LS`+temporalLibro.id+ `;\n`
+                    }
+
+                    
+
+                    temporalLibro = temporalLibro.siguiente;
+
+                }
+
             }
 
             if (temporalUsuario.abajo != null) {
                 conexiones += `U`+temporalUsuario.id +` -> U`+temporalUsuario.id+`L`+temporalUsuario.abajo.id +`;\n`
-
 
             } else {
                 etiquetas += `nullUA`+temporalUsuario.id + `[label = "null" , shape= none];\n`;
@@ -162,7 +194,7 @@ class ListaListasUsuariosLibros{
           .width(1000)
           .dot(codigoDot)
           .render();
-
+        console.log(this);
     }
 
     mostrarListaUsuarios(){
@@ -209,6 +241,25 @@ class ListaListasUsuariosLibros{
         }
         if(temporal == null){
             console.log("No se pudo encontrar el usuario solicitado: "+_nombreUsuario)
+        }
+        return cont
+    }
+
+    cantEjemplaresVendidos(_nombreLibro){
+        var cont = 0;
+
+        var temporal = this.cabeza;
+        while (temporal != null){
+                var tempoLibro = temporal.abajo;
+                while(tempoLibro != null){
+                    if (tempoLibro.libro.nombre_libro == _nombreLibro) {
+                        cont++;
+                    }
+                    tempoLibro = tempoLibro.siguiente;
+                }
+                
+            
+            temporal = temporal.siguiente;
         }
         return cont
     }
@@ -269,6 +320,107 @@ class ListaLibros{
 
 
 
+class ListaDobleTopLibros{
+    constructor(){
+        this.cabeza = null;
+    }
+
+    add(libro){
+        var ventas = listaListasUsuarios.cantEjemplaresVendidos(libro.nombre_libro);
+
+        var nuevoNodo = new NodoTopLibro(libro);
+        nuevoNodo.vendidos = ventas;
+        if (this.cabeza ==null) {
+            this.cabeza = nuevoNodo;
+
+        } else {
+            nuevoNodo.id = (this.cabeza.id+1);
+            nuevoNodo.siguiente = this.cabeza;
+            this.cabeza.anterior = nuevoNodo;
+            this.cabeza = nuevoNodo;
+        }
+        
+       
+
+        this.ordenarVentas();
+        
+    }
+
+    mostrarLista(){
+        var temporal = this.cabeza;
+
+        while (temporal != null) {
+            console.log(temporal);
+            temporal = temporal.siguiente;
+        }
+
+    }
+
+    ordenarVentas(){
+        
+        var temporal1 = this.cabeza;
+        var cant1 
+        var cant2 
+        while (temporal1.siguiente != null) {
+            var temporal2 = temporal1.siguiente;
+            cant1 = listaListasUsuarios.cantEjemplaresVendidos(temporal1.libro.nombre_libro);
+            
+            while (temporal2 != null) {
+                cant2 = listaListasUsuarios.cantEjemplaresVendidos(temporal2.libro.nombre_libro);
+                if(cant1 < cant2 ){
+                    var aux = temporal1.libro;
+                    temporal1.libro = temporal2.libro;
+                    temporal2.libro = aux;
+                   
+                }
+                
+                temporal2 = temporal2.siguiente;
+            }
+    
+            temporal1 = temporal1.siguiente;
+        }
+        
+
+    }
+
+    graficar(lienzo){
+        this.ordenarVentas();
+        var codigoDot = `digraph G {\n label = "Top Ventas"\n node [shape=box]; rankdir=LR; \n nullFin [label="null"; shape= "none"]; \nnullIni [label="null"; shape= "none"];\n`;
+        var etiquetas = `\n`;
+        var conexiones = `\n`;
+
+        var temporal = this.cabeza
+        while (temporal != null) {
+            var conteo = listaListasUsuarios.cantEjemplaresVendidos(temporal.libro.nombre_libro)
+            etiquetas += `nodo`+temporal.id + `[label="Libro: `+ temporal.libro.nombre_libro +`\nEjemplares vendidos: `+ conteo +`"];\n`;
+            if (temporal.siguiente!= null && temporal.anterior != null) {
+                conexiones += `nodo`+temporal.id +` -> nodo`+temporal.siguiente.id + `\n`;
+                conexiones += `nodo`+temporal.id +` -> nodo`+temporal.anterior.id+ `\n`;
+            } else if(temporal.siguiente== null) {
+                conexiones += `nodo`+temporal.id +` -> nullFin`+ `\n`;
+                conexiones += `nodo`+temporal.id +` -> nodo`+temporal.anterior.id+ `\n`;
+            }else{
+                conexiones += `nodo`+temporal.id +` -> nodo`+temporal.siguiente.id+ `\n`;
+                conexiones += `nodo`+temporal.id +` -> nullIni`+ `\n`;
+
+            }
+            
+            temporal = temporal.siguiente;
+            
+        }
+
+        codigoDot += etiquetas + conexiones +"}"
+        console.log(codigoDot);
+        d3.select("#"+lienzo)
+        .graphviz()
+          .height(400)
+          .width(1000)
+          .dot(codigoDot)
+          .render();
+
+    }
+}
+
 
 class ListaDobleTopClientes{
     constructor(){
@@ -286,6 +438,8 @@ class ListaDobleTopClientes{
             this.cabeza.anterior = temporal;
             this.cabeza = temporal;
         }
+
+        this.ordenarCompras();
         
     }
 
@@ -296,6 +450,33 @@ class ListaDobleTopClientes{
             console.log(temporal);
             temporal = temporal.siguiente;
         }
+
+    }
+
+    ordenarCompras(){
+        //var listaNueva = new ListaDobleTopClientes();
+        var temporal1 = this.cabeza;
+        var cant1 
+        var cant2 
+        while (temporal1.siguiente != null) {
+            var temporal2 = temporal1.siguiente;
+            cant1 = listaListasUsuarios.cantLibros(temporal1.usuario.nombre_usuario)
+            
+            while (temporal2 != null) {
+                cant2 = listaListasUsuarios.cantLibros(temporal2.usuario.nombre_usuario)
+                if(cant1 < cant2 ){
+                    var aux = temporal1.usuario;
+                    temporal1.usuario = temporal2.usuario;
+                    temporal2.usuario = aux;
+                   
+                }
+                
+                temporal2 = temporal2.siguiente;
+            }
+    
+            temporal1 = temporal1.siguiente;
+        }
+        //this = listaNueva
 
     }
 
@@ -358,6 +539,74 @@ function crearTablaUsuarios(){
         temporal = temporal.siguiente;
     }
     textoHTML += `</TABLE>`;
+    
+   
+
+    element.innerHTML = textoHTML;
+}
+
+function crearPodioClientes(){
+    var element = document.getElementById("podio-clientes");
+    var cont = 0;
+    var textoHTML = `<center><TABLE class="podio-clientes-tabla"><TR>`;
+    var temporal = listaDobleTopClientes.cabeza;
+
+    var imagen = "";
+
+
+    while (temporal != null && cont <3){
+        switch (cont) {
+            case 2:
+                imagen = `<img src="https://i.ibb.co/58rpsjR/bronze.png" width = "100px" alt="bronze" border="0" />`; break;
+            case 1:
+                imagen = `<img src="https://i.ibb.co/k40RKxX/silver.png" width = "100px" alt="silver" border="0" />`;break;
+            case 0:
+                imagen = `<img src="https://i.ibb.co/qxYpTmV/gold.png" width = "100px" alt="gold" border="0" />`;break;
+            
+        }
+
+        textoHTML += `<TD><center> `+imagen+` <br><b>Usuario: </b>` +temporal.usuario.nombre_usuario+
+        `<br><b>Libros comprados: </b> ` + listaListasUsuarios.cantLibros(temporal.usuario.nombre_usuario)+`<br></center></TD>`;
+
+        
+        temporal = temporal.siguiente;
+        cont ++;
+    }
+    textoHTML += `</TR></TABLE></center>`;
+    
+   
+
+    element.innerHTML = textoHTML;
+}
+
+function crearPodioLibros(){
+    var element = document.getElementById("podio-libros");
+    var cont = 0;
+    var textoHTML = `<center><TABLE class="podio-libros-tabla"><TR>`;
+    var temporal = listaDobleTopLibros.cabeza;
+
+    var imagen = "";
+
+
+    while (temporal != null && cont <3){
+        switch (cont) {
+            case 2:
+                imagen = `<img src="https://i.ibb.co/58rpsjR/bronze.png" width = "100px" alt="bronze" border="0" />`; break;
+            case 1:
+                imagen = `<img src="https://i.ibb.co/k40RKxX/silver.png" width = "100px" alt="silver" border="0" />`;break;
+            case 0:
+                imagen = `<img src="https://i.ibb.co/qxYpTmV/gold.png" width = "100px" alt="gold" border="0" />`;break;
+            
+        }
+
+        textoHTML += `<TD><center> `+imagen+` <br><b>Libro: </b>` +temporal.libro.nombre_libro+
+        `<br><b>Libros comprados: </b> ` + listaListasUsuarios.cantEjemplaresVendidos(temporal.libro.nombre_libro)+`<br></center></TD>`;
+
+        
+        temporal = temporal.siguiente;
+        cont ++;
+    }
+    textoHTML += `</TR></TABLE></center>`;
     
    
 
@@ -428,6 +677,20 @@ function llenarTopClientes() {
         temporal = temporal.siguiente;
     }
 }
+
+function llenarTopLibros() {
+    var tempoLibro = listaLibros.cabeza
+   
+    while(tempoLibro != null){
+        listaDobleTopLibros.add(tempoLibro.libro)
+            
+        tempoLibro = tempoLibro.siguiente;
+        }
+
+    
+}
+
+
 
 //#endregion
 
@@ -521,6 +784,7 @@ function concat(lsIzq, centro, lsDer){
 var listaLibros = new ListaLibros();
 var listaListasUsuarios = new ListaListasUsuariosLibros();
 var listaDobleTopClientes  = new ListaDobleTopClientes();
+var listaDobleTopLibros = new ListaDobleTopLibros();
 var isLogeado = false;
 
 //#endregion
@@ -536,6 +800,8 @@ document.getElementById("btn-usuarios").onclick = goUsuarios;
 document.getElementById("btn-index").onclick = goIndex;
 document.getElementById("btn-tops").onclick = goTops;
 document.getElementById("btnLogear").onclick = verificarLogin;
+document.getElementById("cancelbtn").onclick = goIndex;
+
 //document.getElementById("cargaMasiva").onclick = cargar;
 
 
@@ -629,7 +895,7 @@ function llamarBurbuja() {
 //#endregion
 
 
-//#region Creacion de Instancias
+//#region Collapsed Creacion de Instancias
 
 
 listaLibros.add({
@@ -744,7 +1010,6 @@ crearTablaLibros();
 
 
 
-
 listaListasUsuarios.addUsuario({
     "dpi":2354168452525, 
     "nombre_completo": "WIlfred Perez", 
@@ -788,21 +1053,30 @@ listaListasUsuarios.addLibro("Stokes", "Mostaza", listaLibros);
 listaListasUsuarios.addLibro("Booker", "Crustatia", listaLibros);
 listaListasUsuarios.addLibro("Booker", "JJBA", listaLibros);
 
+listaListasUsuarios.addLibro("Wilfred", "Isosure", listaLibros);
+listaListasUsuarios.addLibro("Wilfred", "Isosure", listaLibros);
+listaListasUsuarios.addLibro("Wilfred", "Mostaza", listaLibros);
+listaListasUsuarios.addLibro("Wilfred", "Crustatia", listaLibros);
+listaListasUsuarios.addLibro("Wilfred", "JJBA", listaLibros);
 
 listaListasUsuarios.graficar("lista-listas");
 crearTablaUsuarios();
 
 llenarTopClientes()
+llenarTopLibros();
 
-
+listaDobleTopClientes.ordenarCompras();
 listaDobleTopClientes.graficar("lienzo-TopClientes");
+listaDobleTopLibros.ordenarVentas();
+listaDobleTopLibros.graficar("lienzo-topLibros");
+
 
 //#endregion
 
 
 
-
-
+crearPodioClientes()
+crearPodioLibros()
 var btn = document.getElementById("btn-logout")
 btn.style.display = "none";
 goIndex();
