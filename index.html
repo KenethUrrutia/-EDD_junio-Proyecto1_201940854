@@ -65,16 +65,19 @@
     
 
     <div id="div-usuarios" class="ventana">
-        <div class="div-tabla">
+        <center>
+            <div class="div-tabla">
             <div id="tabla-usuarios">
     
             </div>
-        </div>
-        <br><br>
-        <div id="lista-listas"></div>
-        <div class="container" style="background-color:#f1f1f1">
-            <button id="cargaMasiva" type="button" class="cancelbtn">Carga Masiva</button>
-        </div>
+            <div class="container" style="background-color:#f1f1f1">
+                <button id="cargaMasiva" type="button" class="cancelbtn">Carga Masiva</button>
+            </div>
+            </div>
+            <br><br>
+            <div id="lista-listas"></div>
+        </center>
+        
     </div>
 
 
@@ -100,12 +103,28 @@
         <div id="lienzo-topLibros"></div>
     </div>
 
+
+
     <div id="div-autores" class="ventana">
-        <div class="div-tabla">
-            <div id="tabla-autores">
-    
+        <center>
+            <div class="div-tabla">
+                <div id="tabla-autores">
+        
+                </div>
             </div>
-        </div>
+        </center>
+
+        <div id="modal_container" class="modal-container">
+            <div class="modal">
+                <h1 id="nombre-autor"></h1><br>
+                <p id="dpi-autor"> </p><br>
+                <p id="telefono-autor"> </p><br>
+                <p id="correo-autor"> </p><br>
+                <p id="direccion-autor"> </p><br>
+                <p id="bio-autor"> </p><br>
+                <button id="close">Cerrar</button>
+            </div>
+          </div>
         <br><br>
         <div id="lienzo-Autores"></div>
         

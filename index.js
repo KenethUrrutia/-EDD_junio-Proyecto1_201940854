@@ -1,6 +1,16 @@
 
 
 //#region Clases Nodos
+class NodoAutor{
+    constructor(autor){
+        this.izquierda = null;
+        this.derecha = null;
+        this.autor = autor;
+        this.id = 0;
+    }
+
+}
+
 class NodoTopUsuario{
     constructor(_usuario){
         this.id = 0
@@ -518,6 +528,165 @@ class ListaDobleTopClientes{
     }
 }
 
+
+class ArbolAutores{
+    constructor(){
+        this.raiz = null;
+        this.conexiones = ""
+        this.etiquetas = ""
+        this.contador = 0;
+        this.textoHTML = ""
+        this.busquedaAutor = null
+    }
+
+    add(autor){
+        var nuevoNodo = new NodoAutor(autor);
+        var temporal = this.raiz
+        var agregado = false;
+        if ( temporal != null) {
+            while (!agregado) {
+                
+                if (autor.nombre_autor < temporal.autor.nombre_autor) {
+                    if(temporal.izquierda == null){
+                        temporal.izquierda = nuevoNodo;
+                        nuevoNodo.id = this.contador
+                        this.contador++;
+                        agregado = true;
+                        return;
+                    }
+                    temporal = temporal.izquierda;
+                    
+                } else {
+                    if(temporal.derecha == null){
+                        temporal.derecha = nuevoNodo;
+                        nuevoNodo.id = this.contador
+                        this.contador++;
+                        agregado = true;
+                        return;
+                    }
+                    temporal = temporal.derecha;
+                }
+
+            }
+            
+            
+        }else{
+            nuevoNodo.id = this.contador;
+            this.contador++;
+            this.raiz = nuevoNodo;
+
+            return;
+        }
+
+    }
+
+
+    mostrar(){
+       console.log( this.mostrarInOrden(this.raiz));
+    }
+
+    mostrarInOrden(nodo){
+        if(nodo.izquierda!=null){
+            this.mostrarInOrden(nodo.izquierda)
+        }
+        console.log(nodo.autor.nombre_autor);
+        if (nodo.derecha!=null) {
+            this.mostrarInOrden(nodo.derecha);
+        }
+    }
+
+    graficarInOrden(nodo){
+        
+        if(nodo.izquierda!=null){
+            this.graficarInOrden(nodo.izquierda)
+            this.conexiones += `n`+nodo.id+` -> n`+nodo.izquierda.id+ `;\n`;
+
+        }else{
+            this.etiquetas += `null`+nodo.id+`I [label="null"; shape="none"]\n`;
+            this.conexiones += `n`+nodo.id+` -> null`+nodo.id+ `I;\n`;
+            
+        }
+
+        this.etiquetas += `n`+nodo.id+` [label="`+nodo.autor.nombre_autor+`"]\n`;
+
+        if (nodo.derecha!=null) {
+            this.graficarInOrden(nodo.derecha);
+            this.conexiones += `n`+nodo.id+` -> n`+nodo.derecha.id+ `;\n`;
+            
+            
+        }else{
+            this.etiquetas += `null`+nodo.id+`D [label="null"; shape="none"]\n`;
+            this.conexiones += `n`+nodo.id+` -> null`+nodo.id+ `D;\n`;
+            
+        }
+    }
+
+    graficar(lienzo){
+        
+        this.graficarInOrden(this.raiz);
+
+        var codigoDot = `digraph G {\n`+this.etiquetas + this.conexiones + `}`
+
+        console.log(codigoDot);
+
+        codigoDot += this.etiquetas + this.conexiones +"}"
+        console.log(codigoDot);
+        d3.select("#"+lienzo)
+        .graphviz()
+          .height(400)
+          .width(1000)
+          .dot(codigoDot)
+          .render();
+
+    }
+    
+
+    tablaInOrden(nodo){
+        
+        if(nodo.izquierda!=null){
+            this.tablaInOrden(nodo.izquierda)
+        }
+
+        this.textoHTML += `<TR><TD>` +nodo.autor.nombre_autor+`</TD> <TD>`
+                                +nodo.autor.correo+`</TD> <TD>`
+                                +nodo.autor.telefono+`</TD> <TD> `
+                                +`<button class="vermas" id="vermas" value= "`+nodo.autor.nombre_autor+`"> Ver mas </button></TD></TR>`;
+
+        
+        if (nodo.derecha!=null) {
+            this.tablaInOrden(nodo.derecha);
+        }
+    }
+
+    buscarInOrden(nodo, nombre_autor){
+        if(nodo.izquierda!=null){
+            
+            this.buscarInOrden(nodo.izquierda, nombre_autor)
+
+            
+        }
+        if (nombre_autor == nodo.autor.nombre_autor) {
+            this.busquedaAutor = nodo.autor;
+        }
+        if (nodo.derecha!=null) {
+            
+            this.buscarInOrden(nodo.derecha, nombre_autor);
+
+            
+        }
+        
+    }
+
+    buscarAutor(nombre_autor){
+        this.busquedaAutor = null
+        this.buscarInOrden(this.raiz, nombre_autor);
+
+        return this.busquedaAutor;
+
+    }
+
+}
+
 //#endregion
 
 
@@ -525,13 +694,16 @@ class ListaDobleTopClientes{
 function crearTablaUsuarios(){
     var element = document.getElementById("tabla-usuarios");
     var textoHTML = `<TABLE class="tabla-tabla" >
-                    <TR><TH>Nombre Usuario</TH><TH>Nombre Completo</TH><TH>Rol</TH><TH>Libro Comprados</TH></TR>`;
+                    <TR><TH>Nombre Usuario</TH><TH>Nombre Completo</TH><TH>Correo</TH><TH>DPI</TH><TH>Telefono</TH><TH>Rol</TH><TH>Libro Comprados</TH></TR>`;
     var temporal = listaListasUsuarios.cabeza;
     while (temporal != null){
 
 
         textoHTML += `<TR><TD>` +temporal.usuario.nombre_usuario+`</TD> <TD>`
                                 +temporal.usuario.nombre_completo+`</TD> <TD>`
+                                +temporal.usuario.correo+`</TD> <TD> `
+                                +temporal.usuario.dpi+`</TD> <TD> `
+                                +temporal.usuario.telefono+`</TD> <TD> `
                                 +temporal.usuario.rol+`</TD> <TD> `
                                 +listaListasUsuarios.cantLibros(temporal.usuario.nombre_usuario)+`</TD></TR>`;
 
@@ -544,6 +716,22 @@ function crearTablaUsuarios(){
 
     element.innerHTML = textoHTML;
 }
+
+function crearTablaAutores(){
+    
+    var element = document.getElementById("tabla-autores");
+    var textoHTML = `<TABLE class="tabla-tabla" >
+                    <TR><TH>Nombre</TH><TH>Correo</TH><TH>Telefono</TH><th></th></TR>`;
+    arbolAutores.textoHTML = ""
+    arbolAutores.tablaInOrden(arbolAutores.raiz)
+    textoHTML += arbolAutores.textoHTML
+    textoHTML += `</TABLE>`;
+    
+   
+
+    element.innerHTML = textoHTML;
+}
+
 
 function crearPodioClientes(){
     var element = document.getElementById("podio-clientes");
@@ -627,7 +815,7 @@ function crearTablaLibros(){
                                  temporal.libro.nombre_autor+ `<br><b>Paginas: </b>`+
                                  temporal.libro.paginas+ `<br><b>Categoria: </b>`+
                                  temporal.libro.categoria+ `<br>`+
-                                 `<b>Pila de ejemplares:</b><br><div class="pilaEj" id="pilaEjemplares`+temporal.id+`"> </div></TD></TR>`;
+                                 `<b>Ejemplares: `+temporal.libro.cantidad+`</b><br><div class="pilaEj" id="pilaEjemplares`+temporal.id+`"> </div></TD></TR>`;
         
                                 
         
@@ -645,7 +833,7 @@ function crearTablaLibros(){
 
     while (temporal != null){
 
-        var codigoDot = `digraph G {\ncharset="UTF-8"\nrankdir=UD;\nnodo1 [label="`
+        var codigoDot = `digraph G {\ncharset="UTF-8"\nrankdir=UD;\nfontsize="100pt";\nnodo1 [label="`
         for (let i = 0; i < temporal.libro.cantidad; i++) {
             codigoDot+=`|📕`
         }
@@ -785,6 +973,7 @@ var listaLibros = new ListaLibros();
 var listaListasUsuarios = new ListaListasUsuariosLibros();
 var listaDobleTopClientes  = new ListaDobleTopClientes();
 var listaDobleTopLibros = new ListaDobleTopLibros();
+var arbolAutores =  new ArbolAutores();
 var isLogeado = false;
 
 //#endregion
@@ -797,14 +986,48 @@ document.getElementById("ztoa").onclick = llamarQuicSort;
 document.getElementById("btn-login").onclick = goLogin;
 document.getElementById("btn-logout").onclick = logout;
 document.getElementById("btn-usuarios").onclick = goUsuarios;
+document.getElementById("btn-autores").onclick = goAutores;
 document.getElementById("btn-index").onclick = goIndex;
 document.getElementById("btn-tops").onclick = goTops;
 document.getElementById("btnLogear").onclick = verificarLogin;
 document.getElementById("cancelbtn").onclick = goIndex;
 
+var modal_container = document.getElementById('modal_container');
+document.getElementById('close').addEventListener('click', () => {modal_container.classList.remove('show');});
+
+
 //document.getElementById("cargaMasiva").onclick = cargar;
 
 
+
+function verMas(nombre_autor) {
+    var autor = arbolAutores.buscarAutor(nombre_autor);
+
+    var element = document.getElementById("nombre-autor");
+    element.innerHTML = autor.nombre_autor;
+
+    element = document.getElementById("dpi-autor");
+    element.innerHTML = `<b>DPI: </b>`+autor.dpi;
+
+    element = document.getElementById("telefono-autor");
+    element.innerHTML = `<b>Telefono: </b>`+autor.telefono;
+
+    element = document.getElementById("correo-autor");
+    element.innerHTML = `<b>Correo: </b>`+autor.correo;
+
+    element = document.getElementById("direccion-autor");
+    element.innerHTML =`<b>Direccion: </b>`+ autor.direccion;
+
+    element = document.getElementById("bio-autor");
+    element.innerHTML =`<b>Biografia: </b>`+ autor.biografia;
+
+
+
+    modal_container.classList.add('show'); 
+
+
+    
+}
 
 function logout() {
     isLogeado = false
@@ -840,6 +1063,32 @@ function goIndex() {
     var div = document.getElementById('div-todosLibros')
     div.style.display = "block";
 
+}
+
+function goAutores() {
+    var btnsVerMas = document.querySelectorAll("#vermas");
+    btnsVerMas.forEach(element => {
+        element.addEventListener('click', function(event){
+            verMas(this.value)
+         });
+    });
+    
+    
+    
+
+    
+    
+
+    var divTodos = document.querySelectorAll('.ventana');
+    
+    divTodos.forEach(element => {
+        element.style.display = "none";
+    });
+
+    var div = document.getElementById('div-autores')
+    div.style.display = "block";
+    
+    
 }
 
 function mostrar(){
@@ -1071,6 +1320,91 @@ listaDobleTopLibros.ordenarVentas();
 listaDobleTopLibros.graficar("lienzo-topLibros");
 
 
+
+
+arbolAutores.add({
+    "dpi": 7074253108211,
+    "nombre_autor": "Mccoy Potts",
+    "correo": "mccoypotts@zytrac.com",
+    "telefono": "+502 (940) 479-2052",
+    "direccion": "581 Prince Street, Rodman, North Carolina, 2339",
+    "biografia": "Tempor aliqua in consectetur dolore. Pariatur qui adipisicing consectetur dolor elit magna tempor duis deserunt Lorem irure labore. Anim labore labore fugiat dolore mollit sunt commodo nulla exercitation duis exercitation eiusmod. Elit voluptate nulla sint duis. Id pariatur commodo et elit dolore elit ipsum adipisicing incididunt ipsum.\r\n"
+  });
+arbolAutores.add({
+    "dpi": 3109604185386,
+    "nombre_autor": "Snider Underwood",
+    "correo": "sniderunderwood@zytrac.com",
+    "telefono": "+502 (983) 563-3560",
+    "direccion": "895 Barbey Street, Dixonville, Alabama, 580",
+    "biografia": "Esse irure ex tempor occaecat magna incididunt. Exercitation dolore labore dolore magna nisi ullamco nulla. Do tempor commodo et velit officia deserunt.\r\n"
+  });
+arbolAutores.add({
+    "dpi": 8182728557910,
+    "nombre_autor": "Annette Osborne",
+    "correo": "annetteosborne@zytrac.com",
+    "telefono": "+502 (963) 504-3398",
+    "direccion": "764 Main Street, Lavalette, Hawaii, 6350",
+    "biografia": "Incididunt ad commodo veniam qui et irure occaecat ex. Aliquip aute incididunt occaecat anim deserunt magna culpa elit. Cillum est laboris do est dolore in minim quis tempor aliqua. Ad ex anim sit eu enim in ullamco ex enim tempor quis tempor est qui.\r\n"
+  });
+arbolAutores.add( {
+    "dpi": 7729486517298,
+    "nombre_autor": "Todd Beck",
+    "correo": "toddbeck@zytrac.com",
+    "telefono": "+502 (990) 570-2405",
+    "direccion": "295 Sedgwick Place, Dante, Arizona, 626",
+    "biografia": "Excepteur do cupidatat voluptate sunt dolor dolor consectetur cillum ad. Dolor ullamco fugiat minim consectetur ea ullamco do ullamco duis irure qui proident nisi sunt. Aute eiusmod ullamco ex sit magna sit elit reprehenderit amet eiusmod ea excepteur do dolore. Exercitation irure tempor irure esse consequat pariatur mollit minim quis ex. Sunt do qui nostrud sint ut sunt consequat mollit. Id ea id exercitation officia proident minim labore incididunt ex aliqua exercitation.\r\n"
+  });
+arbolAutores.add({
+    "dpi": 2811544975728,
+    "nombre_autor": "Combs Shannon",
+    "correo": "combsshannon@zytrac.com",
+    "telefono": "+502 (833) 487-3484",
+    "direccion": "226 Abbey Court, Derwood, Ohio, 4098",
+    "biografia": "Qui nulla excepteur laborum mollit ullamco sit nostrud ullamco. Anim amet labore consectetur Lorem et et reprehenderit est occaecat ex dolore laboris commodo excepteur. Duis quis ad dolor laboris aliqua id ipsum dolor. Veniam sunt velit sunt magna qui quis non.\r\n"
+  });
+arbolAutores.add({
+    "dpi": 1410715321127,
+    "nombre_autor": "Traci Byers",
+    "correo": "tracibyers@zytrac.com",
+    "telefono": "+502 (930) 425-2086",
+    "direccion": "747 Cook Street, Gouglersville, Kentucky, 4239",
+    "biografia": "Est esse do ipsum est sit quis sit aliquip ullamco voluptate mollit ea consectetur irure. Aute labore commodo duis aliqua tempor deserunt ullamco cupidatat quis aliqua. Quis ipsum ipsum minim qui irure pariatur nulla.\r\n"
+  });
+arbolAutores.add({
+    "dpi": 2637270124055,
+    "nombre_autor": "Fannie Ortega",
+    "correo": "fannieortega@zytrac.com",
+    "telefono": "+502 (960) 564-3460",
+    "direccion": "525 Eagle Street, Cascades, New Jersey, 7924",
+    "biografia": "Id proident sunt sint minim esse Lorem eiusmod ullamco duis irure pariatur. Nisi qui laborum laboris excepteur laboris mollit velit aliquip dolore culpa consectetur. Sunt culpa eu commodo ea exercitation aute eu nostrud irure officia amet. Et in fugiat minim id exercitation sint anim excepteur. Cupidatat qui id sint ea commodo exercitation consectetur aliqua duis sint nisi aliqua.\r\n"
+  });
+arbolAutores.add({
+    "dpi": 4487638565533,
+    "nombre_autor": "Charity Stevens",
+    "correo": "charitystevens@zytrac.com",
+    "telefono": "+502 (932) 472-2540",
+    "direccion": "191 Hull Street, Thermal, Tennessee, 6615",
+    "biografia": "Duis eu eu culpa irure minim elit aliqua nulla fugiat. Anim eiusmod sunt exercitation non sunt aliqua veniam qui. Elit anim velit dolor laboris cillum fugiat culpa sint sunt ullamco fugiat enim aliqua exercitation. Ipsum exercitation commodo elit exercitation.\r\n"
+  });
+arbolAutores.add({
+    "dpi": 1054469368460,
+    "nombre_autor": "Brigitte Fowler",
+    "correo": "brigittefowler@zytrac.com",
+    "telefono": "+502 (946) 545-3831",
+    "direccion": "583 Norwood Avenue, Kingstowne, Marshall Islands, 2262",
+    "biografia": "Est in ad irure excepteur elit veniam laboris aliquip nisi fugiat adipisicing. Cupidatat dolor id Lorem magna ipsum non. Nostrud ullamco laboris mollit ipsum ea eiusmod in est id commodo. Proident sint voluptate culpa elit culpa proident commodo excepteur in qui ad. Aute est cupidatat ea commodo id excepteur sunt in.\r\n"
+  });
+arbolAutores.add({
+    "dpi": 3956175417269,
+    "nombre_autor": "Anastasia Phillips",
+    "correo": "anastasiaphillips@zytrac.com",
+    "telefono": "+502 (918) 512-3522",
+    "direccion": "777 Louisiana Avenue, Roderfield, Maryland, 6708",
+    "biografia": "Sunt magna voluptate elit aliquip esse dolore exercitation laborum reprehenderit in tempor ad duis. Sunt aliquip mollit mollit Lorem exercitation amet minim minim fugiat commodo. Ut esse nostrud consequat velit veniam eu anim sit veniam mollit duis. Officia ad reprehenderit dolor ullamco ex in ex tempor labore amet proident ad. Eiusmod laborum ut nostrud ipsum. Aliquip reprehenderit quis incididunt elit cupidatat.\r\n"
+  });
+
+
+
 //#endregion
 
 
@@ -1080,3 +1414,10 @@ crearPodioLibros()
 var btn = document.getElementById("btn-logout")
 btn.style.display = "none";
 goIndex();
+
+
+console.log(arbolAutores);
+
+arbolAutores.mostrar();
+arbolAutores.graficar("lienzo-Autores");
+crearTablaAutores();
