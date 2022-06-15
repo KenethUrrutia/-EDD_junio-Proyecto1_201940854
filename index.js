@@ -1,5 +1,5 @@
-
-
+var isLogeado = false;
+var isAdmin = false
 //#region Clases Nodos
 class NodoAutor{
     constructor(autor){
@@ -297,6 +297,22 @@ class ListaListasUsuariosLibros{
             alert("Login Error")
         }
     }
+
+    buscarRol(user){
+        var temporal = this.cabeza;
+        var resultado = null;
+        
+        while(temporal!=null){  
+            
+            if (temporal.usuario.nombre_usuario == user) {
+                resultado = temporal.usuario.rol;
+            }
+            temporal = temporal.siguiente;
+        }
+        return resultado
+
+    }
+
 
 }
 
@@ -974,8 +990,10 @@ var listaListasUsuarios = new ListaListasUsuariosLibros();
 var listaDobleTopClientes  = new ListaDobleTopClientes();
 var listaDobleTopLibros = new ListaDobleTopLibros();
 var arbolAutores =  new ArbolAutores();
-var isLogeado = false;
-
+var modal_container = document.getElementById('modal_container');
+var file
+var btn = document.getElementById("btn-logout")
+btn.style.display = "none";
 //#endregion
 
 
@@ -992,45 +1010,229 @@ document.getElementById("btn-tops").onclick = goTops;
 document.getElementById("btnLogear").onclick = verificarLogin;
 document.getElementById("cancelbtn").onclick = goIndex;
 
-var modal_container = document.getElementById('modal_container');
 document.getElementById('close').addEventListener('click', () => {modal_container.classList.remove('show');});
+document.getElementById('btn-buscar').addEventListener('click', () => {verMas(document.getElementById(`txt-buscar`).value);});
 
 
-//document.getElementById("cargaMasiva").onclick = cargar;
+//#region Cargas Masivas 
+
+var inputUsuarios = document.querySelector('#input-usuarios-json')  
+inputUsuarios.addEventListener('change', (event) => {
+    var fl = event.target.files;
+    file = fl[0];
+    prepararFileUsuarios(file)
+    
+  });
+
+function readFileUsuarios(file) {
+    
+  
+    let reader = new FileReader();
+  
+    reader.readAsText(file);
+  
+    reader.onload = function() {
+      reader.result
+      cargaMasivaUsuarios(reader.result)
+    };
+  
+    reader.onerror = function() {
+      console.log(reader.error);
+    };
+}
+
+function prepararFileUsuarios(file) {
+    
+    const button = document.getElementById('cargaMasivaUsuarios')  
+    button.addEventListener('click', () => {  
+      readFileUsuarios(file);  
+    })
+    
+}
+
+function cargaMasivaUsuarios(texto) {
+    obj=JSON.parse(texto)
+    console.log(obj);
+    obj.forEach(element => {
+        listaListasUsuarios.addUsuario(element)
+        
+    });
+    inputUsuarios.value = ``;
+    document.getElementById('cargaMasivaUsuarios').disabled = true
+    
+    crearTablaUsuarios();
+    listaListasUsuarios.graficar("lista-listas")
+}
 
 
+
+
+
+  var inputAutores = document.querySelector('#input-autores-json')  
+  inputAutores.addEventListener('change', (event) => {
+      var fl = event.target.files;
+      file = fl[0];
+      prepararFileAutores(file)
+      
+    });
+  
+
+
+  function readFileAutores(file) {
+    
+  
+    let reader = new FileReader();
+  
+    reader.readAsText(file);
+  
+    reader.onload = function() {
+      reader.result
+      cargaMasivaAutores(reader.result)
+    };
+  
+    reader.onerror = function() {
+      console.log(reader.error);
+    };
+}
+
+function prepararFileAutores(file) {
+    
+    const button = document.getElementById('cargaMasivaAutores')  
+    button.addEventListener('click', () => {  
+      readFileAutores(file);  
+    })
+    
+}
+
+function cargaMasivaAutores(texto) {
+    obj=JSON.parse(texto)
+    console.log(obj);
+    obj.forEach(element => {
+        arbolAutores.add(element)
+        
+    });
+    inputAutores.value = ``;
+    document.getElementById('cargaMasivaAutores').disabled = true
+
+    crearTablaAutores();
+    arbolAutores.graficar("lienzo-Autores")
+    goAutores();
+}
+
+
+
+  var inputLibros = document.querySelector('#input-libros-json')  
+  inputLibros.addEventListener('change', (event) => {
+      var fl = event.target.files;
+      file = fl[0];
+      prepararFileLibros(file)
+      
+    });
+
+
+  function readFileLibros(file) {
+    
+  
+    let reader = new FileReader();
+  
+    reader.readAsText(file);
+  
+    reader.onload = function() {
+      reader.result
+      cargaMasivaLibros(reader.result)
+    };
+  
+    reader.onerror = function() {
+      console.log(reader.error);
+    };
+}
+
+function prepararFileLibros(file) {
+    
+    const button = document.getElementById('cargaMasivaLibros')  
+    button.addEventListener('click', () => {  
+      readFileLibros(file);  
+    })
+    
+}
+
+function cargaMasivaLibros(texto) {
+    obj=JSON.parse(texto)
+    console.log(obj);
+    obj.forEach(element => {
+        listaLibros.add(element)
+        
+    });
+    inputLibros.value = ``;
+    document.getElementById('cargaMasivaLibros').disabled = true
+    
+
+    crearTablaLibros();
+    goIndex();
+}
+
+
+
+
+//#endregion
+
+//#region Vista admin o user
+
+function vistaAdmin() {
+    var conts = document.querySelectorAll(".container");
+    conts.forEach(element => {
+        element.style.display = "block";
+    });
+    var btnUsers = document.getElementById("btn-usuarios");
+    btnUsers.style.display= "block";
+}
+function vistaUser() {
+    var conts = document.querySelectorAll(".container");
+    conts.forEach(element => {
+        element.style.display = "none";
+    });
+    var btnUsers = document.getElementById("btn-usuarios");
+    btnUsers.style.display= "none";
+}
+
+
+//#endregion
 
 function verMas(nombre_autor) {
     var autor = arbolAutores.buscarAutor(nombre_autor);
+    if (autor==null) {
+        alert("No se encontro el autor")
+    } else {
+        var element = document.getElementById("nombre-autor");
+        element.innerHTML = autor.nombre_autor;
 
-    var element = document.getElementById("nombre-autor");
-    element.innerHTML = autor.nombre_autor;
+        element = document.getElementById("dpi-autor");
+        element.innerHTML = `<b>DPI: </b>`+autor.dpi;
 
-    element = document.getElementById("dpi-autor");
-    element.innerHTML = `<b>DPI: </b>`+autor.dpi;
+        element = document.getElementById("telefono-autor");
+        element.innerHTML = `<b>Telefono: </b>`+autor.telefono;
 
-    element = document.getElementById("telefono-autor");
-    element.innerHTML = `<b>Telefono: </b>`+autor.telefono;
+        element = document.getElementById("correo-autor");
+        element.innerHTML = `<b>Correo: </b>`+autor.correo;
 
-    element = document.getElementById("correo-autor");
-    element.innerHTML = `<b>Correo: </b>`+autor.correo;
+        element = document.getElementById("direccion-autor");
+        element.innerHTML =`<b>Direccion: </b>`+ autor.direccion;
 
-    element = document.getElementById("direccion-autor");
-    element.innerHTML =`<b>Direccion: </b>`+ autor.direccion;
-
-    element = document.getElementById("bio-autor");
-    element.innerHTML =`<b>Biografia: </b>`+ autor.biografia;
-
-
-
-    modal_container.classList.add('show'); 
+        element = document.getElementById("bio-autor");
+        element.innerHTML =`<b>Biografia: </b>`+ autor.biografia;
 
 
+
+        modal_container.classList.add('show');                                              
+    }
+    
     
 }
 
 function logout() {
     isLogeado = false
+    isAdmin = false;
+    vistaUser();
     var btn = document.getElementById("btn-login")
     btn.style.display = "block";
     btn = document.getElementById("btn-logout")
@@ -1041,6 +1243,14 @@ function logout() {
 
 function logear(nombre_usuario) {
     isLogeado = true;
+    var rol = listaListasUsuarios.buscarRol(nombre_usuario);
+    if (rol == `Administrador`) {
+        isAdmin = true
+        vistaAdmin();
+    }else{ 
+        isAdmin = false
+        vistaUser();
+    }
     var btn = document.getElementById("btn-logout")
     btn.innerHTML  = `<i class="bi bi-box-arrow-left"></i> `+nombre_usuario;
     btn.style.display = "block";
@@ -1054,6 +1264,7 @@ function verificarLogin() {
 }
 
 function goIndex() {
+    crearTablaLibros();
     var divTodos = document.querySelectorAll('.ventana');
     
     divTodos.forEach(element => {
@@ -1072,12 +1283,6 @@ function goAutores() {
             verMas(this.value)
          });
     });
-    
-    
-    
-
-    
-    
 
     var divTodos = document.querySelectorAll('.ventana');
     
@@ -1089,10 +1294,6 @@ function goAutores() {
     div.style.display = "block";
     
     
-}
-
-function mostrar(){
-    listaUsuario.mostrarListaUsuarios();
 }
 
 function goLogin() {
@@ -1108,6 +1309,8 @@ function goLogin() {
 }
 
 function goUsuarios() {
+    crearTablaUsuarios();
+    listaListasUsuarios.graficar("lista-listas")
     var divTodos = document.querySelectorAll('.ventana');
     
     divTodos.forEach(element => {
@@ -1120,6 +1323,19 @@ function goUsuarios() {
 }
 
 function goTops() {
+    
+    llenarTopClientes()
+    llenarTopLibros();
+    crearPodioClientes()
+    crearPodioLibros()
+
+    listaDobleTopClientes.ordenarCompras();
+    listaDobleTopClientes.graficar("lienzo-TopClientes");
+    listaDobleTopLibros.ordenarVentas();
+    listaDobleTopLibros.graficar("lienzo-topLibros");
+
+
+
     var divTodos = document.querySelectorAll('.ventana');
     
     divTodos.forEach(element => {
@@ -1144,116 +1360,6 @@ function llamarBurbuja() {
 //#endregion
 
 
-//#region Collapsed Creacion de Instancias
-
-
-listaLibros.add({
-    "isbn": 9538647877108, 
-    "nombre_autor": "Strickland Shelton", 
-    "nombre_libro": "Zounds", 
-    "cantidad": 2, 
-    "fila": 5, 
-    "columna": 10, 
-    "paginas": 187, 
-    "categoria": "Fantasía" 
-});
-
-listaLibros.add({
-    "isbn": 7302360531742, 
-    "nombre_autor": "Collins Cohen", 
-    "nombre_libro": "Isosure", 
-    "cantidad": 7, 
-    "fila": 9, 
-    "columna": 1, 
-    "paginas": 214 , 
-    "categoria": "Thriller" 
-});
-listaLibros.add({
-    "isbn": 2345435382301, 
-    "nombre_autor": "Williamson Lynn", 
-    "nombre_libro": "Crustatia", 
-    "cantidad": 5, 
-    "fila": 6, 
-    "columna": 2, 
-    "paginas": 197, 
-    "categoria": "Fantasía" 
-});
-
-listaLibros.add({
-    "isbn": 9538647877108, 
-    "nombre_autor": "Strickland Shelton", 
-    "nombre_libro": "Principito", 
-    "cantidad": 2, 
-    "fila": 5, 
-    "columna": 10, 
-    "paginas": 187, 
-    "categoria": "Fantasía" 
-});
-
-listaLibros.add({
-    "isbn": 7302360531742, 
-    "nombre_autor": "Collins Cohen", 
-    "nombre_libro": "Pinocho", 
-    "cantidad": 7, 
-    "fila": 9, 
-    "columna": 1, 
-    "paginas": 214 , 
-    "categoria": "Thriller" 
-});
-listaLibros.add({
-    "isbn": 2345435382301, 
-    "nombre_autor": "Williamson Lynn", 
-    "nombre_libro": "Hada xd", 
-    "cantidad": 5, 
-    "fila": 6, 
-    "columna": 2, 
-    "paginas": 197, 
-    "categoria": "Fantasía" 
-});
-listaLibros.add({
-    "isbn": 2345435382301, 
-    "nombre_autor": "Williamson Lynn", 
-    "nombre_libro": "JJBA", 
-    "cantidad": 5, 
-    "fila": 6, 
-    "columna": 2, 
-    "paginas": 197, 
-    "categoria": "Fantasía" 
-});
-listaLibros.add({
-    "isbn": 9538647877108, 
-    "nombre_autor": "Strickland Shelton", 
-    "nombre_libro": "Aladin", 
-    "cantidad": 2, 
-    "fila": 5, 
-    "columna": 10, 
-    "paginas": 187, 
-    "categoria": "Fantasía" 
-});
-
-listaLibros.add({
-    "isbn": 2345435382301, 
-    "nombre_autor": "Williamson Lynn", 
-    "nombre_libro": "Elpepe", 
-    "cantidad": 5, 
-    "fila": 6, 
-    "columna": 2, 
-    "paginas": 197, 
-    "categoria": "Fantasía" 
-});
-listaLibros.add({
-    "isbn": 9538647877108, 
-    "nombre_autor": "Strickland Shelton", 
-    "nombre_libro": "Mostaza", 
-    "cantidad": 2, 
-    "fila": 5, 
-    "columna": 10, 
-    "paginas": 187, 
-    "categoria": "Fantasía" 
-});
-
-
-crearTablaLibros();
 
 
 
@@ -1268,156 +1374,7 @@ listaListasUsuarios.addUsuario({
     "contrasenia": "123",
     "telefono": "+502 (123) 123-4567"
 });
-listaListasUsuarios.addUsuario({
-    "dpi": 3884144641925, 
-    "nombre_completo": "William Leon",
-    "nombre_usuario": "Rhonda", 
-    "correo": "rhondaleon@bitrex.com",
-    "rol": "Usuario", 
-    "contrasenia": "veniam",
-    "telefono": "+502 (841) 537-2727" 
-});
-listaListasUsuarios.addUsuario({
-    "dpi": 5158445914766, 
-    "nombre_completo": "Clarice Baird",
-    "nombre_usuario": "Booker",
-    "correo": "bookerbaird@bitrex.com",
-    "rol": "Administrador",
-    "contrasenia": "labore",
-    "telefono": "+5112 (871) 424-3154" 
-})
-listaListasUsuarios.addUsuario({
-    "dpi": 4209796138857, 
-    "nombre_completo": "Hawkins Graves",
-    "nombre_usuario": "Stokes", 
-    "correo": "mstokesgravesphitrex.com", 
-    "rol": "Usuario", 
-    "contrasenia": "toreo", 
-    "telefono": "+502 (935) 532-2941" 
-})
-
-listaListasUsuarios.addLibro("Stokes", "Isosure", listaLibros);
-listaListasUsuarios.addLibro("Stokes", "Elpepe", listaLibros);
-listaListasUsuarios.addLibro("Stokes", "Mostaza", listaLibros);
-listaListasUsuarios.addLibro("Booker", "Crustatia", listaLibros);
-listaListasUsuarios.addLibro("Booker", "JJBA", listaLibros);
-
-listaListasUsuarios.addLibro("Wilfred", "Isosure", listaLibros);
-listaListasUsuarios.addLibro("Wilfred", "Isosure", listaLibros);
-listaListasUsuarios.addLibro("Wilfred", "Mostaza", listaLibros);
-listaListasUsuarios.addLibro("Wilfred", "Crustatia", listaLibros);
-listaListasUsuarios.addLibro("Wilfred", "JJBA", listaLibros);
-
-listaListasUsuarios.graficar("lista-listas");
-crearTablaUsuarios();
-
-llenarTopClientes()
-llenarTopLibros();
-
-listaDobleTopClientes.ordenarCompras();
-listaDobleTopClientes.graficar("lienzo-TopClientes");
-listaDobleTopLibros.ordenarVentas();
-listaDobleTopLibros.graficar("lienzo-topLibros");
 
 
-
-
-arbolAutores.add({
-    "dpi": 7074253108211,
-    "nombre_autor": "Mccoy Potts",
-    "correo": "mccoypotts@zytrac.com",
-    "telefono": "+502 (940) 479-2052",
-    "direccion": "581 Prince Street, Rodman, North Carolina, 2339",
-    "biografia": "Tempor aliqua in consectetur dolore. Pariatur qui adipisicing consectetur dolor elit magna tempor duis deserunt Lorem irure labore. Anim labore labore fugiat dolore mollit sunt commodo nulla exercitation duis exercitation eiusmod. Elit voluptate nulla sint duis. Id pariatur commodo et elit dolore elit ipsum adipisicing incididunt ipsum.\r\n"
-  });
-arbolAutores.add({
-    "dpi": 3109604185386,
-    "nombre_autor": "Snider Underwood",
-    "correo": "sniderunderwood@zytrac.com",
-    "telefono": "+502 (983) 563-3560",
-    "direccion": "895 Barbey Street, Dixonville, Alabama, 580",
-    "biografia": "Esse irure ex tempor occaecat magna incididunt. Exercitation dolore labore dolore magna nisi ullamco nulla. Do tempor commodo et velit officia deserunt.\r\n"
-  });
-arbolAutores.add({
-    "dpi": 8182728557910,
-    "nombre_autor": "Annette Osborne",
-    "correo": "annetteosborne@zytrac.com",
-    "telefono": "+502 (963) 504-3398",
-    "direccion": "764 Main Street, Lavalette, Hawaii, 6350",
-    "biografia": "Incididunt ad commodo veniam qui et irure occaecat ex. Aliquip aute incididunt occaecat anim deserunt magna culpa elit. Cillum est laboris do est dolore in minim quis tempor aliqua. Ad ex anim sit eu enim in ullamco ex enim tempor quis tempor est qui.\r\n"
-  });
-arbolAutores.add( {
-    "dpi": 7729486517298,
-    "nombre_autor": "Todd Beck",
-    "correo": "toddbeck@zytrac.com",
-    "telefono": "+502 (990) 570-2405",
-    "direccion": "295 Sedgwick Place, Dante, Arizona, 626",
-    "biografia": "Excepteur do cupidatat voluptate sunt dolor dolor consectetur cillum ad. Dolor ullamco fugiat minim consectetur ea ullamco do ullamco duis irure qui proident nisi sunt. Aute eiusmod ullamco ex sit magna sit elit reprehenderit amet eiusmod ea excepteur do dolore. Exercitation irure tempor irure esse consequat pariatur mollit minim quis ex. Sunt do qui nostrud sint ut sunt consequat mollit. Id ea id exercitation officia proident minim labore incididunt ex aliqua exercitation.\r\n"
-  });
-arbolAutores.add({
-    "dpi": 2811544975728,
-    "nombre_autor": "Combs Shannon",
-    "correo": "combsshannon@zytrac.com",
-    "telefono": "+502 (833) 487-3484",
-    "direccion": "226 Abbey Court, Derwood, Ohio, 4098",
-    "biografia": "Qui nulla excepteur laborum mollit ullamco sit nostrud ullamco. Anim amet labore consectetur Lorem et et reprehenderit est occaecat ex dolore laboris commodo excepteur. Duis quis ad dolor laboris aliqua id ipsum dolor. Veniam sunt velit sunt magna qui quis non.\r\n"
-  });
-arbolAutores.add({
-    "dpi": 1410715321127,
-    "nombre_autor": "Traci Byers",
-    "correo": "tracibyers@zytrac.com",
-    "telefono": "+502 (930) 425-2086",
-    "direccion": "747 Cook Street, Gouglersville, Kentucky, 4239",
-    "biografia": "Est esse do ipsum est sit quis sit aliquip ullamco voluptate mollit ea consectetur irure. Aute labore commodo duis aliqua tempor deserunt ullamco cupidatat quis aliqua. Quis ipsum ipsum minim qui irure pariatur nulla.\r\n"
-  });
-arbolAutores.add({
-    "dpi": 2637270124055,
-    "nombre_autor": "Fannie Ortega",
-    "correo": "fannieortega@zytrac.com",
-    "telefono": "+502 (960) 564-3460",
-    "direccion": "525 Eagle Street, Cascades, New Jersey, 7924",
-    "biografia": "Id proident sunt sint minim esse Lorem eiusmod ullamco duis irure pariatur. Nisi qui laborum laboris excepteur laboris mollit velit aliquip dolore culpa consectetur. Sunt culpa eu commodo ea exercitation aute eu nostrud irure officia amet. Et in fugiat minim id exercitation sint anim excepteur. Cupidatat qui id sint ea commodo exercitation consectetur aliqua duis sint nisi aliqua.\r\n"
-  });
-arbolAutores.add({
-    "dpi": 4487638565533,
-    "nombre_autor": "Charity Stevens",
-    "correo": "charitystevens@zytrac.com",
-    "telefono": "+502 (932) 472-2540",
-    "direccion": "191 Hull Street, Thermal, Tennessee, 6615",
-    "biografia": "Duis eu eu culpa irure minim elit aliqua nulla fugiat. Anim eiusmod sunt exercitation non sunt aliqua veniam qui. Elit anim velit dolor laboris cillum fugiat culpa sint sunt ullamco fugiat enim aliqua exercitation. Ipsum exercitation commodo elit exercitation.\r\n"
-  });
-arbolAutores.add({
-    "dpi": 1054469368460,
-    "nombre_autor": "Brigitte Fowler",
-    "correo": "brigittefowler@zytrac.com",
-    "telefono": "+502 (946) 545-3831",
-    "direccion": "583 Norwood Avenue, Kingstowne, Marshall Islands, 2262",
-    "biografia": "Est in ad irure excepteur elit veniam laboris aliquip nisi fugiat adipisicing. Cupidatat dolor id Lorem magna ipsum non. Nostrud ullamco laboris mollit ipsum ea eiusmod in est id commodo. Proident sint voluptate culpa elit culpa proident commodo excepteur in qui ad. Aute est cupidatat ea commodo id excepteur sunt in.\r\n"
-  });
-arbolAutores.add({
-    "dpi": 3956175417269,
-    "nombre_autor": "Anastasia Phillips",
-    "correo": "anastasiaphillips@zytrac.com",
-    "telefono": "+502 (918) 512-3522",
-    "direccion": "777 Louisiana Avenue, Roderfield, Maryland, 6708",
-    "biografia": "Sunt magna voluptate elit aliquip esse dolore exercitation laborum reprehenderit in tempor ad duis. Sunt aliquip mollit mollit Lorem exercitation amet minim minim fugiat commodo. Ut esse nostrud consequat velit veniam eu anim sit veniam mollit duis. Officia ad reprehenderit dolor ullamco ex in ex tempor labore amet proident ad. Eiusmod laborum ut nostrud ipsum. Aliquip reprehenderit quis incididunt elit cupidatat.\r\n"
-  });
-
-
-
-//#endregion
-
-
-
-crearPodioClientes()
-crearPodioLibros()
-var btn = document.getElementById("btn-logout")
-btn.style.display = "none";
 goIndex();
-
-
-console.log(arbolAutores);
-
-arbolAutores.mostrar();
-arbolAutores.graficar("lienzo-Autores");
-crearTablaAutores();
+vistaUser();

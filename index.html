@@ -31,7 +31,7 @@
 
     <div id="div-login" class="ventana">
         <form  >
-            <div class="container">
+            <div >
               <label for="nombre_usuario"><b>Nombre de Usuario</b></label>
               <input type="text" placeholder="Ingrese nombre de usuario" id="nombre_usuario" required>
           
@@ -42,7 +42,7 @@
               
             </div>
           
-            <div class="container" style="background-color:#f1f1f1">
+            <div  style="background-color:#f1f1f1">
               <button id="cancelbtn" type="button" class="cancelbtn">Cancel</button>
             </div>
             
@@ -56,6 +56,15 @@
             <button id="atoz"> A-Z</button>
             <button id="ztoa"> Z-A</button>
         </div>
+        <center>
+            <div class="container" style="background-color:#f1f1f1">
+                <br><br>
+                <input type="file"  id="input-libros-json">
+                <br>
+                <button id="cargaMasivaLibros" type="button" class="cancelbtn">Carga Masiva</button>
+                <br><br>
+            </div>
+        </center>
         <div class="div-tabla">
             <div id="tabla-libros">
     
@@ -65,13 +74,21 @@
     
 
     <div id="div-usuarios" class="ventana">
+        <div class="separador-X">
+            <h1>Usuarios</h1>
+        </div>
+        <br><br>
         <center>
             <div class="div-tabla">
             <div id="tabla-usuarios">
     
             </div>
             <div class="container" style="background-color:#f1f1f1">
-                <button id="cargaMasiva" type="button" class="cancelbtn">Carga Masiva</button>
+                <br><br>
+                <input type="file"  id="input-usuarios-json">
+                <br>
+                <button id="cargaMasivaUsuarios" type="button" class="cancelbtn">Carga Masiva</button>
+                <br><br>
             </div>
             </div>
             <br><br>
@@ -106,13 +123,39 @@
 
 
     <div id="div-autores" class="ventana">
+        <div class="separador-X">
+            <h1>Autores</h1>
+        </div>
+        <br><br>
+        
+        <div class="div-buscar">
+            <center>
+                <input type="text" placeholder="Buscar autor.." id="txt-buscar">
+                <button id="btn-buscar"><i class="bi bi-search"></i></button>
+            
+            </center>
+                
+        </div>
+        
+
+        <br><br>
         <center>
             <div class="div-tabla">
                 <div id="tabla-autores">
         
                 </div>
             </div>
+            <div class="container" style="background-color:#f1f1f1">
+                <br><br>
+                <input type="file"  id="input-autores-json">
+                <br>
+                <button id="cargaMasivaAutores" type="button" class="cancelbtn">Carga Masiva</button>
+                <br><br>
+            </div>
+    
         </center>
+
+        
 
         <div id="modal_container" class="modal-container">
             <div class="modal">
