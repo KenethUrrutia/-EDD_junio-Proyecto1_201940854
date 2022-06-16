@@ -11,6 +11,16 @@ class NodoAutor{
 
 }
 
+class NodoCola{
+    constructor(nombre_usuario, nombre_libro, cantidad){
+        this.id=0;
+        this.nombre_usuario = nombre_usuario;
+        this.nombre_libro = nombre_libro;
+        this.cantidad = cantidad;
+        this.atras = null
+    }
+}
+
 class NodoTopUsuario{
     constructor(_usuario){
         this.id = 0
@@ -74,7 +84,7 @@ class ListaListasUsuariosLibros{
 
         this.cabeza = tempo;
     }
-    addLibro(usuario, nombre_libro, listaTodosLibros){
+    addLibro(usuario, libro){
         
 
         var tempoUsuario = this.cabeza
@@ -82,25 +92,14 @@ class ListaListasUsuariosLibros{
         while(tempoUsuario != null){
 
             if(tempoUsuario.usuario.nombre_usuario == usuario){
-                var tempoLibro = listaTodosLibros.cabeza
-                while (tempoLibro != null) {
-                    if (tempoLibro.libro.nombre_libro == nombre_libro && tempoLibro.libro.cantidad > 0) {
-                        var nuevoNodoLibro = new NodoLibro(tempoLibro.libro)
+                var nuevoNodoLibro = new NodoLibro(libro)
                         
-                        nuevoNodoLibro.siguiente = tempoUsuario.abajo
-                        if (tempoUsuario.abajo != null) {
-                            nuevoNodoLibro.id = (tempoUsuario.abajo.id+1)
-                        }
-                        tempoUsuario.abajo = nuevoNodoLibro
-                        
-                        return
-                    }
-                    tempoLibro  = tempoLibro.siguiente
+                nuevoNodoLibro.siguiente = tempoUsuario.abajo
+                if (tempoUsuario.abajo != null) {
+                    nuevoNodoLibro.id = (tempoUsuario.abajo.id+1)
                 }
-
-                if(tempoLibro == null){
-                    console.log("No se encontran existencias del libro " + nombre_libro+ " en la lista ")
-                }
+                tempoUsuario.abajo = nuevoNodoLibro
+                return
             }
             tempoUsuario= tempoUsuario.siguiente
         }
@@ -197,7 +196,7 @@ class ListaListasUsuariosLibros{
         }
 
         codigoDot += etiquetas + conexiones + ranks+"}"
-        console.log(codigoDot);
+
         d3.select("#"+lienzo)
         .graphviz()
           .height(400)
@@ -206,6 +205,8 @@ class ListaListasUsuariosLibros{
           .render();
         console.log(this);
     }
+
+    
 
     mostrarListaUsuarios(){
         var temporal = this.cabeza;
@@ -342,6 +343,46 @@ class ListaLibros{
 
     }
 
+    buscarLibro(nombre_libro){
+        var temporal = this.cabeza;
+        while (temporal != null){
+            if(temporal.libro.nombre_libro == nombre_libro)
+                return temporal.libro
+            temporal = temporal.siguiente;
+        }
+        return null
+    }
+
+    graficar(lienzo){
+        var codigoDot = `digraph G {\n label = "Todos los libros"\n node [shape=box]; rankdir=RL; \n  \nnull [label="null"; shape= "none"];\n`;
+        var etiquetas = `\n`;
+        var conexiones = `\n`;
+
+        var temporal = this.cabeza
+        while (temporal != null) {
+            
+            etiquetas += `nodo`+temporal.id + `[label="`+ temporal.libro.nombre_libro +`"];\n`;
+            if (temporal.siguiente != null) {
+                conexiones += `nodo`+temporal.id +` -> nodo`+temporal.siguiente.id + `;\n`;
+            } else{
+                conexiones += `nodo`+temporal.id +` -> null;\n`;
+            }
+            
+            temporal = temporal.siguiente;
+            
+        }
+
+        codigoDot += etiquetas + conexiones +"}"
+        console.log(codigoDot);
+        d3.select("#"+lienzo)
+        .graphviz()
+          .height(400)
+          .width(1000)
+          .dot(codigoDot)
+          .render();
+
+    }
+
 }
 
 
@@ -387,24 +428,27 @@ class ListaDobleTopLibros{
         var temporal1 = this.cabeza;
         var cant1 
         var cant2 
-        while (temporal1.siguiente != null) {
-            var temporal2 = temporal1.siguiente;
-            cant1 = listaListasUsuarios.cantEjemplaresVendidos(temporal1.libro.nombre_libro);
-            
-            while (temporal2 != null) {
-                cant2 = listaListasUsuarios.cantEjemplaresVendidos(temporal2.libro.nombre_libro);
-                if(cant1 < cant2 ){
-                    var aux = temporal1.libro;
-                    temporal1.libro = temporal2.libro;
-                    temporal2.libro = aux;
-                   
-                }
+        if (temporal1 != null) {
+            while (temporal1.siguiente != null) {
+                var temporal2 = temporal1.siguiente;
+                cant1 = listaListasUsuarios.cantEjemplaresVendidos(temporal1.libro.nombre_libro);
                 
-                temporal2 = temporal2.siguiente;
+                while (temporal2 != null) {
+                    cant2 = listaListasUsuarios.cantEjemplaresVendidos(temporal2.libro.nombre_libro);
+                    if(cant1 < cant2 ){
+                        var aux = temporal1.libro;
+                        temporal1.libro = temporal2.libro;
+                        temporal2.libro = aux;
+                       
+                    }
+                    
+                    temporal2 = temporal2.siguiente;
+                }
+        
+                temporal1 = temporal1.siguiente;
             }
-    
-            temporal1 = temporal1.siguiente;
         }
+        
         
 
     }
@@ -436,7 +480,7 @@ class ListaDobleTopLibros{
         }
 
         codigoDot += etiquetas + conexiones +"}"
-        console.log(codigoDot);
+
         d3.select("#"+lienzo)
         .graphviz()
           .height(400)
@@ -533,7 +577,6 @@ class ListaDobleTopClientes{
         }
 
         codigoDot += etiquetas + conexiones +"}"
-        console.log(codigoDot);
         d3.select("#"+lienzo)
         .graphviz()
           .height(400)
@@ -643,10 +686,9 @@ class ArbolAutores{
 
         var codigoDot = `digraph G {\n`+this.etiquetas + this.conexiones + `}`
 
-        console.log(codigoDot);
 
         codigoDot += this.etiquetas + this.conexiones +"}"
-        console.log(codigoDot);
+
         d3.select("#"+lienzo)
         .graphviz()
           .height(400)
@@ -703,6 +745,102 @@ class ArbolAutores{
 
 }
 
+
+class ColaEspera{
+    constructor(){
+        this.primero = null;
+        this.ultimo =  null;
+    }
+
+    peek(){
+        return this.primero;
+    }
+
+    encolar(nombre_usuario, nombre_libro, cantidad){
+        var temporal = new NodoCola(nombre_usuario, nombre_libro, cantidad);
+        
+        if (this.ultimo != null) {
+            
+            this.ultimo.atras = temporal;
+            temporal.id = (this.ultimo.id+1);
+            this.ultimo = temporal; 
+            
+        } else {
+            this.primero = temporal;
+            this.ultimo =  this.primero;
+        }
+    }
+
+    desencolar(){
+        if (this.primero != null) {
+            this.primero = this.primero.atras;
+        }
+    }
+    
+    remplazarPrimero(nuevo){
+        nuevo.atras = this.primero.atras;
+        this.primero = nuevo;
+    }
+
+    entregarLibros(){
+        var nodoTemporal = this.primero;
+
+        var libro = listaLibros.buscarLibro(nodoTemporal.nombre_libro);
+        
+        while ( nodoTemporal.cantidad > 0) {
+            if (libro.cantidad > 0) {
+                listaListasUsuarios.addLibro(nodoTemporal.nombre_usuario, libro, listaLibros);
+                
+                libro.cantidad--;
+                nodoTemporal.cantidad --;
+            }else{
+                break
+            }
+        }
+        if (nodoTemporal.cantidad == 0) {
+            this.desencolar()
+            alert("Todos los libros entregados")
+        } else {
+            this.remplazarPrimero(nodoTemporal)
+            alert("Faltan libros para completar el pedido");
+        }
+
+    }
+
+    graficar(lienzo){
+        var codigoDot = `digraph G {\n label = "Cola de pedidos"\n node [shape=box]; rankdir=RL; \n  \nnull [label="null"; shape= "none"];\n`;
+        var etiquetas = `\n`;
+        var conexiones = `\n`;
+
+        var temporal = this.primero
+        while (temporal != null) {
+            
+            etiquetas += `nodo`+temporal.id + `[label="Usuario: `+ temporal.nombre_usuario +`\nLibro: `+ temporal.nombre_libro +`\nCantidad: `+ temporal.cantidad +`"];\n`;
+            if (temporal.atras != null) {
+                conexiones += `nodo`+temporal.id +` -> nodo`+temporal.atras.id + `;\n`;
+            } else{
+                conexiones += `nodo`+temporal.id +` -> null;\n`;
+            }
+            
+            temporal = temporal.atras;
+            
+        }
+
+        codigoDot += etiquetas + conexiones +"}"
+        console.log(codigoDot);
+        d3.select("#"+lienzo)
+        .graphviz()
+          .height(400)
+          .width(1000)
+          .dot(codigoDot)
+          .render();
+
+    }
+
+}
+
+
+
 //#endregion
 
 
@@ -748,6 +886,27 @@ function crearTablaAutores(){
     element.innerHTML = textoHTML;
 }
 
+function crearTablaPedidos(){
+    
+    var element = document.getElementById("tabla-pedidos");
+    var textoHTML = `<TABLE class="tabla-tabla" >
+                    <TR><TH>Usuario</TH><TH>Libro</TH><TH>Cantidad</TH><th></th></TR>`;
+    var temporal = colaEspera.primero;
+    while (temporal != null){
+
+
+        textoHTML += `<TR><TD>` +temporal.nombre_usuario+`</TD> <TD>`
+                                +temporal.nombre_libro+`</TD> <TD>`
+                                +temporal.cantidad+`</TD> <TD> </TR>`;
+        
+        temporal = temporal.atras;
+    }
+
+    textoHTML += `</TABLE>`;
+    element.innerHTML = textoHTML;
+
+    
+}
 
 function crearPodioClientes(){
     var element = document.getElementById("podio-clientes");
@@ -855,8 +1014,7 @@ function crearTablaLibros(){
         }
         
         codigoDot+=`" shape = "record" margin=0 height=0.2];\n}`
-        console.log(codigoDot);
-        console.log(`#pilaEjemplares`+temporal.id);
+
         d3.select(`#pilaEjemplares`+temporal.id)
         .graphviz()
             .height(50)
@@ -875,6 +1033,7 @@ function crearTablaLibros(){
 
 
 function llenarTopClientes() {
+    listaDobleTopClientes = new ListaDobleTopClientes();
     var temporal = listaListasUsuarios.cabeza
     while (temporal != null) {
         listaDobleTopClientes.add(temporal.usuario);
@@ -883,13 +1042,14 @@ function llenarTopClientes() {
 }
 
 function llenarTopLibros() {
+    listaDobleTopLibros = new ListaDobleTopLibros();
     var tempoLibro = listaLibros.cabeza
    
     while(tempoLibro != null){
         listaDobleTopLibros.add(tempoLibro.libro)
             
         tempoLibro = tempoLibro.siguiente;
-        }
+    }
 
     
 }
@@ -990,6 +1150,7 @@ var listaListasUsuarios = new ListaListasUsuariosLibros();
 var listaDobleTopClientes  = new ListaDobleTopClientes();
 var listaDobleTopLibros = new ListaDobleTopLibros();
 var arbolAutores =  new ArbolAutores();
+var colaEspera = new ColaEspera()
 var modal_container = document.getElementById('modal_container');
 var file
 var btn = document.getElementById("btn-logout")
@@ -1004,11 +1165,14 @@ document.getElementById("ztoa").onclick = llamarQuicSort;
 document.getElementById("btn-login").onclick = goLogin;
 document.getElementById("btn-logout").onclick = logout;
 document.getElementById("btn-usuarios").onclick = goUsuarios;
+document.getElementById("btn-libreras").onclick = goLibreras;
 document.getElementById("btn-autores").onclick = goAutores;
 document.getElementById("btn-index").onclick = goIndex;
 document.getElementById("btn-tops").onclick = goTops;
+document.getElementById("btn-pedidos").onclick = goPedidos;
 document.getElementById("btnLogear").onclick = verificarLogin;
 document.getElementById("cancelbtn").onclick = goIndex;
+document.getElementById("btn-entregar").onclick = entregar;
 
 document.getElementById('close').addEventListener('click', () => {modal_container.classList.remove('show');});
 document.getElementById('btn-buscar').addEventListener('click', () => {verMas(document.getElementById(`txt-buscar`).value);});
@@ -1058,7 +1222,6 @@ function cargaMasivaUsuarios(texto) {
         
     });
     inputUsuarios.value = ``;
-    document.getElementById('cargaMasivaUsuarios').disabled = true
     
     crearTablaUsuarios();
     listaListasUsuarios.graficar("lista-listas")
@@ -1112,7 +1275,6 @@ function cargaMasivaAutores(texto) {
         
     });
     inputAutores.value = ``;
-    document.getElementById('cargaMasivaAutores').disabled = true
 
     crearTablaAutores();
     arbolAutores.graficar("lienzo-Autores")
@@ -1164,10 +1326,10 @@ function cargaMasivaLibros(texto) {
         
     });
     inputLibros.value = ``;
-    document.getElementById('cargaMasivaLibros').disabled = true
     
 
     crearTablaLibros();
+    listaLibros.graficar("lienzo-libros")
     goIndex();
 }
 
@@ -1185,6 +1347,8 @@ function vistaAdmin() {
     });
     var btnUsers = document.getElementById("btn-usuarios");
     btnUsers.style.display= "block";
+    var btnPedidos = document.getElementById("btn-pedidos");
+    btnPedidos.style.display= "block";
 }
 function vistaUser() {
     var conts = document.querySelectorAll(".container");
@@ -1193,6 +1357,8 @@ function vistaUser() {
     });
     var btnUsers = document.getElementById("btn-usuarios");
     btnUsers.style.display= "none";
+    var btnPedidos = document.getElementById("btn-pedidos");
+    btnPedidos.style.display= "none";
 }
 
 
@@ -1229,10 +1395,18 @@ function verMas(nombre_autor) {
     
 }
 
+function entregar(){
+    colaEspera.entregarLibros();
+    goPedidos();    
+
+}
+
 function logout() {
     isLogeado = false
     isAdmin = false;
+    goIndex();
     vistaUser();
+
     var btn = document.getElementById("btn-login")
     btn.style.display = "block";
     btn = document.getElementById("btn-logout")
@@ -1276,6 +1450,20 @@ function goIndex() {
 
 }
 
+function goLibreras() {
+    //crearTablaUsuarios();
+    //listaListasUsuarios.graficar(`lista-listas`);
+    var divTodos = document.querySelectorAll('.ventana');
+    
+    divTodos.forEach(element => {
+        element.style.display = "none";
+    });
+
+    var div = document.getElementById('div-libreras')
+    div.style.display = "block";
+
+}
+
 function goAutores() {
     var btnsVerMas = document.querySelectorAll("#vermas");
     btnsVerMas.forEach(element => {
@@ -1297,6 +1485,8 @@ function goAutores() {
 }
 
 function goLogin() {
+    listaLibros.graficar("lienzo-libros");
+
     var divTodos = document.querySelectorAll('.ventana');
     
     divTodos.forEach(element => {
@@ -1310,7 +1500,7 @@ function goLogin() {
 
 function goUsuarios() {
     crearTablaUsuarios();
-    listaListasUsuarios.graficar("lista-listas")
+    listaListasUsuarios.graficar(`lista-listas`);
     var divTodos = document.querySelectorAll('.ventana');
     
     divTodos.forEach(element => {
@@ -1322,19 +1512,42 @@ function goUsuarios() {
 
 }
 
+function goPedidos() {
+    crearTablaPedidos()
+    colaEspera.graficar("lienzo-pedidos")
+    var divTodos = document.querySelectorAll('.ventana');
+    
+    divTodos.forEach(element => {
+        element.style.display = "none";
+    });
+
+    var div = document.getElementById('div-pedidos')
+    div.style.display = "block";
+
+}
+
+
 function goTops() {
     
-    llenarTopClientes()
-    llenarTopLibros();
-    crearPodioClientes()
-    crearPodioLibros()
+    
+    try {
+        llenarTopClientes()
+        llenarTopLibros();
+        
+        listaDobleTopClientes.ordenarCompras();
+        crearPodioClientes()
+        listaDobleTopClientes.graficar("lienzo-TopClientes"); 
 
-    listaDobleTopClientes.ordenarCompras();
-    listaDobleTopClientes.graficar("lienzo-TopClientes");
-    listaDobleTopLibros.ordenarVentas();
-    listaDobleTopLibros.graficar("lienzo-topLibros");
+        listaDobleTopLibros.ordenarVentas();
+        crearPodioLibros()
+        listaDobleTopLibros.graficar("lienzo-topLibros");
+        
+    
+        document.getElementById("nada-mostrar").style.display = "none"
 
-
+      } catch (error) {
+        document.getElementById("nada-mostrar").style.display = "block"
+      }
 
     var divTodos = document.querySelectorAll('.ventana');
     
@@ -1354,7 +1567,8 @@ function llamarQuicSort() {
 
 function llamarBurbuja() {
     listaLibros = ordenBurbuja(listaLibros);
-    crearTablaLibros();
+    listaLibros.graficar("lienzo-libros")
+    goIndex();
 }
 
 //#endregion
@@ -1378,3 +1592,16 @@ listaListasUsuarios.addUsuario({
 
 goIndex();
 vistaUser();
+
+
+
+
+
+colaEspera.encolar("Kari", "Ultrimax", 1);
+colaEspera.encolar("Mullen", "Savvy", 2);
+colaEspera.encolar("Mullen", "Moltonic", 2 );
+colaEspera.encolar("Lily", "Furnigeer", 4);
+colaEspera.encolar("Lily", "Tellifly", 5);
+
+console.log(colaEspera);
+

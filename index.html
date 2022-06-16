@@ -18,9 +18,11 @@
     <nav class="nav">
         <ul>
           <li><button  class="active" id="btn-index" > <i class="bi bi-house-fill"></i> Inicio</button></li>
+          <li><button  id="btn-libreras" ><i class="bi bi-file-spreadsheet"></i> Libreras</button></li>
           <li><button  id="btn-usuarios" ><i class="bi bi-people-fill"></i> Usuarios</button></li>
           <li><button  id="btn-tops" ><i class="bi bi-award"></i> Tops</button></li>
           <li><button  id="btn-autores" ><i class="bi bi-vector-pen"></i> Autores</button></li>
+          <li><button  id="btn-pedidos" ><i class="bi bi-card-list"></i> Pedidos</button></li>
           <li><button   id="btn-login"  > <i class="bi bi-box-arrow-in-right"></i> Login</button></li>
           <li><button   id="btn-logout"  >  </button></li>
         </ul>
@@ -66,10 +68,11 @@
             </div>
         </center>
         <div class="div-tabla">
-            <div id="tabla-libros">
-    
-            </div>
+            <div id="tabla-libros"></div>
         </div>
+        <br><br>
+        <div class="lienzo" id="lienzo-libros"></div>
+        
     </div>
     
 
@@ -92,7 +95,7 @@
             </div>
             </div>
             <br><br>
-            <div id="lista-listas"></div>
+            <div class="lienzo" id="lista-listas"></div>
         </center>
         
     </div>
@@ -108,7 +111,9 @@
         <div id="podio-clientes">
         </div>
         <br><br>
-        <div id="lienzo-TopClientes"></div>
+        <div class="lienzo" id="lienzo-TopClientes"></div>
+        
+
 
         <div class="separador-X">
             <h1>Top libros vendidos</h1>
@@ -117,7 +122,12 @@
         <div id="podio-libros">
         </div>
         <br><br>
-        <div id="lienzo-topLibros"></div>
+        <div class="lienzo" id="lienzo-topLibros"></div>
+        <br>
+        <div id="nada-mostrar" style="text-align: center; display: none;">
+            <h1>Ups! :( <br>Aun hay nada para mostrar </h1>
+        </div>
+        <br>
     </div>
 
 
@@ -142,7 +152,6 @@
         <center>
             <div class="div-tabla">
                 <div id="tabla-autores">
-        
                 </div>
             </div>
             <div class="container" style="background-color:#f1f1f1">
@@ -169,14 +178,53 @@
             </div>
           </div>
         <br><br>
-        <div id="lienzo-Autores"></div>
+        <div class="lienzo" id="lienzo-Autores"></div>
         
     </div>
 
 
+    <div id="div-pedidos" class="ventana">
+        <button id="btn-entregar">Entregar</i></button>
+        
+        <div id="tabla-pedidos">
+        </div>
+        <br><br>
+        <div class="lienzo" id="lienzo-pedidos"></div>
+        
 
 
+        
+    </div>
 
-    <script  src="./index.js"></script>
+    <div id="div-libreras" class="ventana">
+        <div class="separador-X">
+            <h1>Fantasia</h1>
+        </div>
+        <br><br>
+        
+        <div  id="tabla-fantasia">
+        </div>
+        <br><br>
+        <div class="lienzo" id="lienzo-fantasia"></div>
+        <br><br>
+
+
+        <div class="separador-X">
+            <h1>Thriller</h1>
+        </div>
+        <br><br>
+        
+        <div id="tabla-thriller">
+        </div>
+        <br><br>
+        <div class="lienzo" id="lienzo-thriller"></div>
+        
+
+
+        
+    </div>
+
+
+    <script  src='./index.js'></script>
 </body>
 </html>

@@ -193,31 +193,7 @@ button:hover {
 
 
 
-#lista-listas{
-    width: 1000px;
-    height: 400px;
-    background-color: aqua;
-    padding: 5px;
-}
-#lienzo-TopClientes{
-        
-    margin-left: auto;
-    margin-right: auto;
-    width: 1000px;
-    height: 200px;
-    background-color: aqua;
-    padding: 5px;
-}
-#lienzo-topLibros{
-        
-    margin-left: auto;
-    margin-right: auto;
-    width: 1000px;
-    height: 200px;
-    background-color: aqua;
-    padding: 5px;
-}
-#lienzo-Autores{
+.lienzo{
         
     margin-left: auto;
     margin-right: auto;
@@ -226,6 +202,7 @@ button:hover {
     background-color: aqua;
     padding: 5px;
 }
+
 
 button {
     background-color: #04AA6D;
