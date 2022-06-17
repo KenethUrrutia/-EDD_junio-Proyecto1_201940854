@@ -26,7 +26,6 @@ class NodoTopUsuario{
         this.id = 0
         this.usuario = _usuario;
         this.siguiente = null;
-        this.abajo = null;
     }
 
 }
@@ -59,11 +58,200 @@ class NodoLibro{
         this.anterior = null;
     }
 }
+
+class NodoMatriz{
+    constructor(libro, col ,fila){
+        this.libro = libro;
+        this.col =col;
+        this.fila =fila;
+        this.abajo=null
+        this.siguiente=null
+    }
+}
+
 //#endregion
 
 
 //#region Clases de Estructuras
 
+class IndiceMatriz{
+    constructor(){
+        this.cabeza = null
+        this.ultimo = null
+    }
+    insertarlista(col){
+        var temporal = new NodoMatriz(col, col,0);
+        if(this.cabeza == null){
+            this.cabeza = temporal
+            this.ultimo = temporal
+        }else{
+            this.ultimo.siguiente = temporal
+            temp = this.ultimo
+            this.ultimo = temporal
+        }
+
+        var temp = this.ultimo
+
+        for (let fila = 25; fila > 0; fila--) {
+           var nuevonodo = new NodoMatriz(null,col,fila)
+           var auxanterior = temp.abajo
+           temp.abajo = nuevonodo
+           nuevonodo.abajo = auxanterior
+        }
+
+        var temporalIndice = this.cabeza;
+        while (temporalIndice.siguiente != null) {
+            var temporalIndiceSiguiente = temporalIndice.siguiente
+
+            var temporalLibro  = temporalIndice.abajo;
+            var temporalLibroSiguiente  = temporalIndiceSiguiente.abajo;
+
+                while (temporalLibro != null) {
+                    temporalLibro.siguiente = temporalLibroSiguiente
+                    temporalLibro = temporalLibro.abajo
+                    temporalLibroSiguiente = temporalLibroSiguiente.abajo
+                }
+            temporalIndice = temporalIndice.siguiente;
+        }
+    
+
+    }
+
+
+    buscarlista(_buscar){
+        var temporal = this.cabeza
+        while(temporal != null){
+            if(temporal.col == _buscar){
+                return temporal
+            }
+            temporal =temporal.siguiente
+        }
+        return null
+    }
+
+}
+
+class MatrizOrtogonal{
+    constructor(){
+        this.indice = new IndiceMatriz();
+        for (let col = 1; col <= 25; col++) {
+            this.indice.insertarlista(col); 
+        }
+    }
+
+    insercionMatriz(libro, col, fila){
+        var temporalCol = this.indice.buscarlista(col)
+        var temporalFila = temporalCol.abajo
+        while(temporalFila != null){
+            if(temporalFila.fila == fila){
+                temporalFila.libro = libro
+                return
+            }
+            temporalFila = temporalFila.abajo
+        }
+    }
+
+    graficar(lienzo){
+        var codigoDot = `digraph G {\n label = "Fantasia"\n node [shape=box]; rankdir=LR; \n `;
+
+        var etiquetas = `\n`;
+        var ranks = `\n`;
+        var conexiones = `\n`;
+        var temporalIndice = this.indice.cabeza;
+        var temporalLibro = null;
+
+        while (temporalIndice != null) {
+            etiquetas += `C`+temporalIndice.col + ` [label = "`+temporalIndice.col +`" ];\n//hijos de `+ temporalIndice.col+`\n`;
+
+            var rankCol = `{ rank = same; C`+temporalIndice.col + `; `;
+
+            if (temporalIndice.siguiente != null) {
+                conexiones += `C`+temporalIndice.col + ` -> C` + temporalIndice.siguiente.col + `;\n`
+                
+                temporalLibro = temporalIndice.abajo;
+
+                while (temporalLibro != null) {
+                    if (temporalLibro.libro== null) {
+                        etiquetas += `C`+temporalIndice.col+`F`+temporalLibro.fila + ` [label = "" ];\n`;
+                        
+                    } else {
+                        etiquetas += `C`+temporalIndice.col+`F`+temporalLibro.fila + ` [label = "`+temporalLibro.libro.nombre_libro+`" ];\n`;
+                    }
+
+                    rankCol += `C`+temporalIndice.col+`F`+temporalLibro.fila+`; `;
+
+                    if (temporalIndice.siguiente != null) {
+                        
+                        conexiones += `C`+temporalIndice.col+`F`+temporalLibro.fila +` -> C`+temporalIndice.siguiente.col+`F`+temporalLibro.fila +`;\n`
+
+                    } 
+                    if (temporalLibro.abajo != null) {
+                        
+                        conexiones += `C`+temporalIndice.col+`F`+temporalLibro.fila +` -> C`+temporalIndice.col+`F`+(temporalLibro.abajo.fila) +`;\n`
+
+                    }  
+
+                    temporalLibro = temporalLibro.abajo;
+
+                }
+
+
+
+
+            } else {
+                
+                temporalLibro = temporalIndice.abajo;
+
+                while (temporalLibro != null) {
+                    if (temporalLibro.libro== null) {
+                        etiquetas += `C`+temporalIndice.col+`F`+temporalLibro.fila + ` [label = "" ];\n`;
+                        
+                    } else {
+                        etiquetas += `C`+temporalIndice.col+`F`+temporalLibro.fila + ` [label = "`+temporalLibro.libro.nombre_libro+`" ];\n`;
+                    }
+
+                    rankCol += `C`+temporalIndice.col+`F`+temporalLibro.fila+`; `;
+
+                    if (temporalLibro.siguiente != null) {
+                        
+                        conexiones += `C`+temporalIndice.col+`F`+temporalLibro.fila +` -> C`+temporalIndice.siguiente.col+`F`+temporalLibro.siguiente.fila +`;\n`
+
+                    } 
+                    if (temporalLibro.abajo != null) {
+                        
+                        conexiones += `C`+temporalIndice.col+`F`+temporalLibro.fila +` -> C`+temporalIndice.abajo.col+`F`+temporalLibro.abajo.fila +`;\n`
+
+                    } 
+
+                    temporalLibro = temporalLibro.abajo;
+
+                }
+
+
+
+            }
+
+            
+            conexiones += `C`+temporalIndice.col +` -> C`+temporalIndice.col+`F`+temporalIndice.abajo.fila +`;\n`
+
+            ranks += rankCol + `}\n`;
+
+            temporalIndice = temporalIndice.siguiente;
+        }
+
+        codigoDot += etiquetas + conexiones + ranks+"}"
+
+        d3.select("#"+lienzo)
+        .graphviz()
+          .height(400)
+          .width(1000)
+          .dot(codigoDot)
+          .render();
+        console.log(codigoDot);
+        console.log(this);
+    }
+
+}
 
 
 
@@ -871,6 +1059,44 @@ function crearTablaUsuarios(){
     element.innerHTML = textoHTML;
 }
 
+
+function crearTablaFantasia(){
+    var element = document.getElementById("tabla-fantasia");
+    var textoHTML = `<TABLE class="tabla-matriz" >`;
+
+    var temporalIndice = matrizOrtogonal.indice.cabeza.abajo;
+    
+
+
+    while (temporalIndice != null) {
+
+        var temporalLibro  = temporalIndice;
+        var textoRow = `<tr class="trxd">`
+
+            while (temporalLibro != null) {
+
+                if (temporalLibro.libro == null) {
+                    console.log("Libro " + temporalLibro.fila +`-`+ temporalLibro.col);
+                    textoRow += `<td  class="td2">        </td>`
+
+                } else {
+                    textoRow += `<td class="td1">`+temporalLibro.libro.nombre_libro+`</td>`
+                }
+
+                temporalLibro = temporalLibro.siguiente;
+            }
+        textoRow += `</tr>`;
+        textoHTML += textoRow
+
+        temporalIndice = temporalIndice.abajo;
+    }
+
+    
+    textoHTML += `</TABLE>`;
+
+    element.innerHTML = textoHTML;
+}
+
 function crearTablaAutores(){
     
     var element = document.getElementById("tabla-autores");
@@ -1151,6 +1377,7 @@ var listaDobleTopClientes  = new ListaDobleTopClientes();
 var listaDobleTopLibros = new ListaDobleTopLibros();
 var arbolAutores =  new ArbolAutores();
 var colaEspera = new ColaEspera()
+var matrizOrtogonal = new MatrizOrtogonal();
 var modal_container = document.getElementById('modal_container');
 var file
 var btn = document.getElementById("btn-logout")
@@ -1453,6 +1680,8 @@ function goIndex() {
 function goLibreras() {
     //crearTablaUsuarios();
     //listaListasUsuarios.graficar(`lista-listas`);
+    llenarMatrices();
+    crearTablaFantasia();
     var divTodos = document.querySelectorAll('.ventana');
     
     divTodos.forEach(element => {
@@ -1604,4 +1833,24 @@ colaEspera.encolar("Lily", "Furnigeer", 4);
 colaEspera.encolar("Lily", "Tellifly", 5);
 
 console.log(colaEspera);
+
+
+
+
+
+function llenarMatrices() {
+    
+
+    var temporal = listaLibros.cabeza;
+    while (temporal != null) {
+        if (temporal.libro.categoria == "Fantasia") {
+            matrizOrtogonal.insercionMatriz(temporal.libro, temporal.libro.columna, temporal.libro.fila);
+        }
+        temporal = temporal.siguiente;
+    }
+
+    matrizOrtogonal.graficar("lienzo-fantasia");
+
+
+}
 

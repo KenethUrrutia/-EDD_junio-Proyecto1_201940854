@@ -97,7 +97,7 @@
 
 table{
 	background-color: white;
-	text-align: left;
+	
 }
 
 th, td{
@@ -363,3 +363,39 @@ height: 50px;
     opacity: 0.7;
     font-size: 14px;
   }
+
+
+  
+  .tabla-matriz{
+    border: #2d0d08 solid 10px;
+    border-bottom: #2d0d08 solid 30px;
+    margin-left: 30px;
+
+  }
+
+  .tabla-matriz .td1{
+    background-image: url(./img/celda.png);
+    background-size: cover;
+    font-size: large;
+    padding-left: 40px;
+    padding-right: 40px;
+    font-weight: bold;
+    height: 70px;
+    width: 96px;
+
+  }
+  .tabla-matriz .td2{
+    background-image: url(./img/celda2.png);
+    background-size: cover;
+    font-size: large;
+    padding-left: 40px;
+    padding-right: 40px;
+    font-weight: bold;
+    height: 70px;
+    width: 96px;
+
+  }
+   .trxd:hover td{
+	background-color: #000000;
+	color: rgb(0, 0, 0);
+}

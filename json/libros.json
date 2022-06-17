@@ -4,10 +4,10 @@
     "nombre_autor": "Albert Castro",
     "nombre_libro": "Zialactic",
     "cantidad": 9,
-    "fila": 10,
-    "columna": 10,
+    "fila": 1,
+    "columna": 1,
     "paginas": 250,
-    "categoria": "Thriller"
+    "categoria": "Fantasia"
   },
   {
     "isbn": 7813208731085,
