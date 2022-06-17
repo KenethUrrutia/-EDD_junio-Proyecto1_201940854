@@ -50,16 +50,6 @@
     "categoria": "Fantasia"
   },
   {
-    "isbn": 3287938322231,
-    "nombre_autor": "Roy Wynn",
-    "nombre_libro": "Furnigeer",
-    "cantidad": 4,
-    "fila": 9,
-    "columna": 10,
-    "paginas": 248,
-    "categoria": "Thriller"
-  },
-  {
     "isbn": 2321108592759,
     "nombre_autor": "Stokes Howell",
     "nombre_libro": "Sealoud",

@@ -68,13 +68,424 @@ class NodoMatriz{
         this.siguiente=null
     }
 }
+class NodoMatrizD{
+    constructor(libro, col ,fila){
+        this.libro = libro;
+        this.col =col;
+        this.fila =fila;
+        this.abajo=null
+        this.arriba = null;
+        this.siguiente=null
+        this.anterior = null
+    }
+}
 
 //#endregion
 
 
 //#region Clases de Estructuras
+class ListaDispersa {
+    constructor() {
+        this.primero = null;
+        this.ultimo = null;
+    }
 
-class IndiceMatriz{
+    //busqueda
+    busquedaCol(col) {
+        var temp = this.primero
+        while (temp != null) {
+            if (temp.col == col) {
+                return temp
+            }
+            temp = temp.siguiente
+        }
+        return null
+    }
+    busquedaFila(fila) {
+        var temp = this.primero
+        while (temp != null) {
+            if (temp.fila == fila) {
+                return temp
+            }
+            temp = temp.abajo
+        }
+        return null
+    }
+
+    //ordenar la lista de cabeceras
+    ordenarCol(nodo){
+        var aux = this.primero
+        while(aux != null){
+            if(aux.col < nodo.col){
+                aux = aux.siguiente
+            }else{
+                if(aux == this.primero){
+                    nodo.siguiente = aux;
+                    aux.anterior = nodo;
+                    this.primero = nodo;
+                }else{
+                    nodo.anterior = aux.anterior;
+                    aux.anterior.siguiente = nodo;
+                    nodo.siguiente = aux;
+                    aux.anterior = nodo;
+                    return;
+                }
+            }
+        }
+        //va a insertar entonces hasta de ultimo
+        this.ultimo.siguiente = nodo;
+        nodo.anterior = this.ultimo;
+        this.ultimo = nodo;
+    }
+
+    ordenarFila(nodo){
+        var aux = this.primero
+        while(aux != null){
+            if(aux.fila < nodo.fila){
+                aux = aux.abajo
+            }else{
+                if(aux == this.primero){
+                    nodo.abajo = aux;
+                    aux.arriba = nodo;
+                    this.primero = nodo;
+                }else{
+                    nodo.arriba = aux.arriba;
+                    aux.arriba.abajo = nodo;
+                    nodo.abajo = aux;
+                    aux.arriba = nodo;
+                    return;
+                }
+            }
+        }
+        //va a insertar entonces hasta de ultimo
+        this.ultimo.abajo = nodo;
+        nodo.arriba = this.ultimo;
+        this.ultimo = nodo;
+    }
+
+    //insertar en lista
+    insertarCol(col){
+        var nodo = new NodoMatrizD(null,col,0);
+        //quiere decir que no hay nada en esa lista
+        if (this.primero == null){
+            this.primero = this.ultimo = nodo;
+            return;
+        }
+        //no es el primero en la lista entonces lo ingreso ordenadamente
+        this.ordenarCol(nodo);
+    }
+    insertarFila(fila){
+        var nodo = new NodoMatrizD(null,0,fila);
+        //quiere decir que no hay nada en esa lista
+        if (this.primero == null){
+            this.primero = this.ultimo = nodo;
+            return;
+        }
+        //no es el primero en la lista entonces lo ingreso ordenadamente
+        this.ordenarFila(nodo);
+
+    }
+}
+
+
+class MatrizDispersa{
+    constructor() {
+        this.lista_horizontal = new ListaDispersa();
+        this.lista_vertical = new ListaDispersa();
+    }
+
+    insertar(libro, col, fila) {
+        var nodoCol = this.lista_horizontal.busquedaCol(col);
+        var nodoFila = this.lista_vertical.busquedaFila(fila);
+
+        console.log("Insertar en " + col + " " + fila);
+        if(nodoCol == null && nodoFila == null){
+            this.caso1(libro, col, fila);
+        }else if (nodoCol == null && nodoFila !=null){
+            this.caso2(libro, col, fila);
+        }else if(nodoCol !=null && nodoFila ==null){
+            this.caso3(libro, col, fila);
+        }else{
+            this.caso4(libro, col, fila);
+        }
+    }
+    caso1(libro,col,fila){
+        this.lista_horizontal.insertarCol(col);
+        this.lista_vertical.insertarFila(fila);
+
+        var nodoCol = this.lista_horizontal.busquedaCol(col)
+        var nodoFila = this.lista_vertical.busquedaFila(fila)
+        console.log(`Caso 1 Fila` + fila);
+        var nuevo = new NodoMatriz(libro,col,fila);
+        //enlazar con cabeceras en col
+        nodoCol.abajo = nuevo;
+        //enlazar con cabeceras en fila
+        nodoFila.siguiente = nuevo;
+
+
+    }
+    caso2(libro,col,fila){
+        this.lista_horizontal.insertarCol(col)   
+
+        var nodoCol = this.lista_horizontal.busquedaCol(col)
+        var nodoFila = this.lista_vertical.busquedaFila(fila)
+        var agregado = false;
+        console.log(`Caso 2 Fila` + fila);
+
+        var nuevo = new NodoMatrizD(libro,col,fila);
+        var nodoFilaSig = nodoFila.siguiente;
+
+        var cabecera = 0;
+
+        while(nodoFilaSig != null){
+            cabecera = nodoFilaSig.col;
+            if(cabecera < col){
+                nodoFilaSig = nodoFilaSig.siguiente;
+            }else{
+                nuevo.siguiente = nodoFilaSig;
+                nuevo.anterior = nodoFilaSig.anterior;
+                nodoFilaSig.anterior.siguiente = nuevo;
+                nodoFilaSig.anterior = nuevo;
+                agregado = true;
+                break;
+            }
+        }
+        if(agregado == false){
+            nodoFilaSig = nodoFila.siguiente;
+            while(nodoFilaSig.siguiente != null){
+                nodoFilaSig = nodoFilaSig.siguiente;
+            }
+            nuevo.anterior = nodoFilaSig;
+            nodoFilaSig.siguiente = nuevo;
+        }
+        nodoCol.abajo = nuevo;
+        nuevo.arriba = nodoCol;
+
+    }
+    caso3(libro,col,fila){
+        this.lista_vertical.insertarFila(fila)
+
+        var nodoCol = this.lista_horizontal.busquedaCol(col)
+        var nodoFila = this.lista_vertical.busquedaFila(fila)
+        var agregado = false;
+        console.log(`Caso 3 Fila` + fila);
+
+        var nuevo = new NodoMatrizD(libro,col,fila);
+        var nodoColAb = nodoCol.abajo;
+        let cabecera = 0;
+
+        while(nodoColAb != null ){
+            cabecera = nodoColAb.fila;
+            if(cabecera < fila){
+                nodoColAb = nodoColAb.abajo;
+            }else{
+                nuevo.abajo = nodoColAb;
+                nuevo.arriba = nodoColAb.arriba;
+                nodoColAb.arriba.abajo = nuevo;
+                nodoColAb.arriba = nuevo;
+                agregado = true;
+                break;
+            }
+        }
+        if(!agregado){
+            nodoColAb = nodoCol.abajo;
+            while(nodoColAb.abajo != null){
+                nodoColAb = nodoColAb.abajo;
+            }
+            nodoColAb.abajo = nuevo;
+            nuevo.arriba = nodoColAb;
+        }
+        nodoFila.siguiente = nuevo;
+        nuevo.anterior = nodoFila;
+
+    }
+    caso4(libro,col,fila){
+        let nodoCol = this.lista_horizontal.busquedaCol(col);
+        let nodoFila = this.lista_vertical.busquedaFila(fila);
+        console.log(`Caso 4 Fila` + fila);
+
+        var agregadoFila = false;
+        var agregadoCol = false;
+        let nuevo = new NodoMatrizD(libro, col, fila);
+        let nodoFilaSig = nodoFila.siguiente;
+        let cabecera = 0;
+        
+        while(nodoFilaSig != null){
+            cabecera = nodoFilaSig.col;
+            if (cabecera < col) {
+                nodoFilaSig = nodoFilaSig.siguiente;
+            } else {
+                nuevo.siguiente = nodoFilaSig;
+                nuevo.anterior = nodoFilaSig.anterior;
+                nodoFilaSig.anterior.siguiente = nuevo;
+                nodoFilaSig.anterior = nuevo;
+                agregadoFila = true;
+                break;
+            }
+        }
+        if(agregadoFila == false){
+            nodoFilaSig = nodoFila.siguiente;
+            while(nodoFilaSig.siguiente != null){
+                nodoFilaSig = nodoFilaSig.siguiente;
+            }
+            nuevo.anterior = nodoFilaSig;
+            nodoFilaSig.siguiente = nuevo;
+        }
+
+        var nodoColAb = nodoCol.abajo;
+        cabecera = 0;
+
+        while(nodoColAb != null ){
+            cabecera = nodoColAb.fila;
+            if(cabecera < fila){
+                nodoColAb = nodoColAb.abajo;
+            }else{
+                nuevo.abajo = nodoColAb;
+                nuevo.arriba = nodoColAb.arriba;
+                nodoColAb.arriba.abajo = nuevo;
+                nodoColAb.arriba = nuevo;
+                agregadoCol = true;
+                break;
+            }
+        }
+        if(!agregadoCol){
+            nodoColAb = nodoCol.abajo;
+            while(nodoColAb.abajo != null){
+                nodoColAb = nodoColAb.abajo;
+            }
+            nodoColAb.abajo = nuevo;
+            nuevo.arriba = nodoColAb;
+        }
+    }
+
+    graficar(lienzo){
+        var codigoDot = `digraph G {\n label = "Thriller"\n node [shape=box]; rankdir=LR; \n `;
+
+        var etiquetas = `\n`;
+        var ranks = `\n`;
+        var conexiones = `\n`;
+        var temporalCol = this.lista_horizontal.primero;
+        var temFila = this.lista_vertical.primero;
+        var temporalLibro = null;
+
+        var rankFila = "{ rank = same;";
+
+        while (temFila != null) {
+            if (temFila.abajo != null) {
+                 
+                conexiones += `C0F`+temFila.fila + ` -> ` + `C0F`+temFila.abajo.fila+`; `;
+            }
+            temFila = temFila.abajo
+        }
+
+        while (temporalCol != null) {
+            etiquetas += `C`+temporalCol.col + ` [label = "`+temporalCol.col +`" group=0 ];\n//hijos de `+ temporalCol.col+`\n`;
+            //etiquetas += `F`+temporalFila.fila + ` [label = "`+temporalFila.fila +`" ];\n`;
+
+            var rankCol = `{ rank = same; C`+temporalCol.col + `; `;
+            if (temporalCol.siguiente != null) {
+                conexiones += `C`+temporalCol.col + ` -> C` + temporalCol.siguiente.col + `;\n`
+                
+                temporalLibro = temporalCol.abajo;
+
+                while (temporalLibro != null) {
+                    if (temporalLibro.libro!= null) {
+                        etiquetas += `C`+temporalCol.col+`F`+temporalLibro.fila + ` [label = "`+temporalLibro.libro.nombre_libro+`" group=`+temporalLibro.fila+`];\n`;
+                    }
+
+                    rankCol += `C`+temporalCol.col+`F`+temporalLibro.fila+`; `;
+                   
+                    var temporalFila = this.lista_vertical.busquedaFila(temporalLibro.fila);
+                    
+                    if (temporalLibro.anterior == null) {
+                        etiquetas += `C0F`+ temporalFila.fila +`[label = "`+ temporalFila.fila +`"  group=`+temporalFila.fila+`]; \n`
+                        rankFila += `C0F`+temporalFila.fila + `;`;
+                        conexiones += `C0F`+temporalFila.fila + ` -> ` + `C`+temporalCol.col+`F`+temporalLibro.fila+`; \n `;
+                    } else{
+                        rankFila += `C0F`+temporalFila.fila + `;`;
+                        etiquetas += `C0F`+ temporalFila.fila +`[label = "`+ temporalFila.fila +`"  group=`+temporalFila.fila+`]; \n`
+
+                        conexiones +=  `C`+temporalLibro.anterior.col+ `F`+temporalLibro.fila + ` -> ` + `C`+temporalLibro.col+`F`+temporalLibro.fila+`; \n`;
+                    }
+                    if (temporalLibro.siguiente != null) {
+                        conexiones +=  `C`+temporalLibro.col+ `F`+temporalLibro.fila + ` -> ` + `C`+temporalLibro.siguiente.col+`F`+temporalLibro.fila+`; \n`;
+                    }
+
+                    if (temporalLibro.abajo != null) {
+                        
+                        conexiones += `C`+temporalCol.col+`F`+temporalLibro.fila +` -> C`+temporalCol.col+`F`+(temporalLibro.abajo.fila) +`;\n`
+
+                    }  
+
+                    temporalLibro = temporalLibro.abajo;
+                }
+
+
+
+                
+
+            } else {
+                
+                temporalLibro = temporalCol.abajo;
+
+                while (temporalLibro != null) {
+                    if (temporalLibro.libro!= null) {
+                        etiquetas += `C`+temporalCol.col+`F`+temporalLibro.fila + ` [label = "`+temporalLibro.libro.nombre_libro+`" group=`+temporalLibro.fila+`];\n`;
+                    }
+
+                    rankCol += `C`+temporalCol.col+`F`+temporalLibro.fila+`; `;
+                   
+
+
+                    if (temporalCol.siguiente != null) {
+                        
+                        conexiones += `C`+temporalCol.col+`F`+temporalLibro.fila +` -> C`+temporalCol.siguiente.col+`F`+temporalLibro.fila +`;\n`
+
+                    } 
+                    if (temporalLibro.abajo != null) {
+                        
+                        conexiones += `C`+temporalCol.col+`F`+temporalLibro.fila +` -> C`+temporalCol.col+`F`+(temporalLibro.abajo.fila) +`;\n`
+
+                    }  
+
+                    temporalLibro = temporalLibro.abajo;
+                }
+
+
+
+            }
+            
+    
+
+            
+            
+            conexiones += `C`+temporalCol.col +` -> C`+temporalCol.col+`F`+temporalCol.abajo.fila +`;\n`
+
+            ranks += rankCol + `}\n\n`;
+
+            temporalCol = temporalCol.siguiente;
+        }
+
+        
+        rankFila+=`}\n`
+        codigoDot += etiquetas + conexiones + ranks + rankFila+"}"
+
+        console.log(codigoDot);
+        d3.select("#"+lienzo)
+        .graphviz()
+          .height(400)
+          .width(1000)
+          .dot(codigoDot)
+          .render();
+        console.log(this);
+        
+    }
+
+
+}
+
+
+class IndiceMatrizOrtogonal{
     constructor(){
         this.cabeza = null
         this.ultimo = null
@@ -133,7 +544,7 @@ class IndiceMatriz{
 
 class MatrizOrtogonal{
     constructor(){
-        this.indice = new IndiceMatriz();
+        this.indice = new IndiceMatrizOrtogonal();
         for (let col = 1; col <= 25; col++) {
             this.indice.insertarlista(col); 
         }
@@ -252,7 +663,6 @@ class MatrizOrtogonal{
     }
 
 }
-
 
 
 class ListaListasUsuariosLibros{
@@ -1076,9 +1486,7 @@ function crearTablaFantasia(){
             while (temporalLibro != null) {
 
                 if (temporalLibro.libro == null) {
-                    console.log("Libro " + temporalLibro.fila +`-`+ temporalLibro.col);
                     textoRow += `<td  class="td2">        </td>`
-
                 } else {
                     textoRow += `<td class="td1">`+temporalLibro.libro.nombre_libro+`</td>`
                 }
@@ -1096,6 +1504,8 @@ function crearTablaFantasia(){
 
     element.innerHTML = textoHTML;
 }
+
+
 
 function crearTablaAutores(){
     
@@ -1378,6 +1788,7 @@ var listaDobleTopLibros = new ListaDobleTopLibros();
 var arbolAutores =  new ArbolAutores();
 var colaEspera = new ColaEspera()
 var matrizOrtogonal = new MatrizOrtogonal();
+var matrizDispersa = new MatrizDispersa();
 var modal_container = document.getElementById('modal_container');
 var file
 var btn = document.getElementById("btn-logout")
@@ -1836,21 +2247,22 @@ console.log(colaEspera);
 
 
 
-
-
 function llenarMatrices() {
     
 
     var temporal = listaLibros.cabeza;
+    
     while (temporal != null) {
         if (temporal.libro.categoria == "Fantasia") {
             matrizOrtogonal.insercionMatriz(temporal.libro, temporal.libro.columna, temporal.libro.fila);
+        }else{
+            matrizDispersa.insertar(temporal.libro, temporal.libro.columna, temporal.libro.fila)
         }
         temporal = temporal.siguiente;
     }
 
     matrizOrtogonal.graficar("lienzo-fantasia");
-
+    matrizDispersa.graficar("lienzo-thriller")
 
 }
 
