@@ -1,6 +1,7 @@
 var isLogeado = false;
 var isAdmin = false
 var usuarioLogeado = "";
+
 //#region Clases Nodos
 class NodoAutor{
     constructor(autor){
@@ -69,6 +70,7 @@ class NodoMatriz{
         this.siguiente=null
     }
 }
+
 class NodoMatrizD{
     constructor(libro, col ,fila){
         this.libro = libro;
@@ -187,7 +189,6 @@ class ListaDispersa {
 
     }
 }
-
 
 class MatrizDispersa{
     constructor() {
@@ -485,7 +486,6 @@ class MatrizDispersa{
 
 }
 
-
 class IndiceMatrizOrtogonal{
     constructor(){
         this.cabeza = null
@@ -664,7 +664,6 @@ class MatrizOrtogonal{
     }
 
 }
-
 
 class ListaListasUsuariosLibros{
     constructor(){
@@ -916,7 +915,6 @@ class ListaListasUsuariosLibros{
 
 }
 
-
 class ListaLibros{
     constructor(){
         this.cabeza = null;
@@ -983,8 +981,6 @@ class ListaLibros{
     }
 
 }
-
-
 
 class ListaDobleTopLibros{
     constructor(){
@@ -1090,7 +1086,6 @@ class ListaDobleTopLibros{
     }
 }
 
-
 class ListaDobleTopClientes{
     constructor(){
         this.cabeza = null;
@@ -1185,7 +1180,6 @@ class ListaDobleTopClientes{
 
     }
 }
-
 
 class ArbolAutores{
     constructor(){
@@ -1344,7 +1338,6 @@ class ArbolAutores{
 
 }
 
-
 class ColaEspera{
     constructor(){
         this.primero = null;
@@ -1469,7 +1462,6 @@ function crearTablaUsuarios(){
 
     element.innerHTML = textoHTML;
 }
-
 
 function crearTablaFantasia(){
     var element = document.getElementById("tabla-fantasia");
@@ -1721,7 +1713,6 @@ function crearTablaLibros(){
 
 }
 
-
 function llenarTopClientes() {
     listaDobleTopClientes = new ListaDobleTopClientes();
     var temporal = listaListasUsuarios.cabeza
@@ -1743,8 +1734,6 @@ function llenarTopLibros() {
 
     
 }
-
-
 
 //#endregion
 
@@ -1862,11 +1851,14 @@ var arbolAutores =  new ArbolAutores();
 var colaEspera = new ColaEspera()
 var matrizOrtogonal = new MatrizOrtogonal();
 var matrizDispersa = new MatrizDispersa();
+
 var modal_container = document.getElementById('modal_container');
 var modal_container_libro = document.getElementById('modal_container_libro');
 var file
+
 var btn = document.getElementById("btn-logout")
 btn.style.display = "none";
+
 //#endregion
 
 
@@ -1902,9 +1894,9 @@ document.getElementById("btn-mostrar-lienzo-thriller").onclick = mostrarLienzoth
 document.getElementById('close').addEventListener('click', () => {modal_container.classList.remove('show');});
 document.getElementById('close-comprar').addEventListener('click', () => {modal_container_libro.classList.remove('show'); });
 document.getElementById('btn-comprar-libro').onclick = comprarLibro;
-
 document.getElementById('btn-buscar').addEventListener('click', () => {verMas(document.getElementById(`txt-buscar`).value);});
 
+//#endregion
 
 //#region Cargas Masivas 
 
@@ -1956,10 +1948,6 @@ function cargaMasivaUsuarios(texto) {
     alert("Usuarios Agregados")
 }
 
-
-
-
-
   var inputAutores = document.querySelector('#input-autores-json')  
   inputAutores.addEventListener('change', (event) => {
       var fl = event.target.files;
@@ -1968,8 +1956,6 @@ function cargaMasivaUsuarios(texto) {
       
     });
   
-
-
   function readFileAutores(file) {
     
   
@@ -2020,7 +2006,6 @@ function cargaMasivaAutores(texto) {
       prepararFileLibros(file)
       
     });
-
 
   function readFileLibros(file) {
     
@@ -2084,6 +2069,7 @@ function vistaAdmin() {
     var btnCarga = document.getElementById("btn-cargamasiva");
     btnCarga.style.display= "block";
 }
+
 function vistaUser() {
     var conts = document.querySelectorAll(".container");
     conts.forEach(element => {
@@ -2117,6 +2103,8 @@ function vistaNoUser() {
 
 
 //#endregion
+
+//#region funciones para mostrar lienzos
 
 function mostrarLienzothriller() {
 
@@ -2174,6 +2162,9 @@ function mostrarListaListas() {
 
 }
 
+//#endregion
+
+//#region funciones para botones 
 function comprarLibro(){
     var nombre_libro = document.getElementById("h-nombre-libro").value
     var cantidad = document.getElementById("input-cantidad").value
@@ -2274,7 +2265,9 @@ function logear(nombre_usuario) {
 function verificarLogin() {
     listaListasUsuarios.verificarUserYPass();
 }
+//#endregion
 
+//#region funciones redireccion
 function goIndex() {
     crearTablaLibros();
     var divTodos = document.querySelectorAll('.ventana');
@@ -2457,9 +2450,3 @@ listaListasUsuarios.addUsuario({
 
 goIndex();
 vistaNoUser();
-
-
-
-
-
-
