@@ -2181,7 +2181,6 @@ function comprarLibro(){
 
     alert("Pedido enviado")
     modal_container_libro.classList.remove('show');
-    document.getElementById("input-cantidad").removeAttribute("value")
 }
 
 function comprar(nombre_libro) {
