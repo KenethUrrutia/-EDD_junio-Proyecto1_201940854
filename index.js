@@ -85,7 +85,6 @@ class NodoMatrizD{
 
 //#endregion
 
-
 //#region Clases de Estructuras
 class ListaDispersa {
     constructor() {
@@ -682,6 +681,7 @@ class ListaListasUsuariosLibros{
 
         this.cabeza = tempo;
     }
+
     addLibro(usuario, libro){
         
 
@@ -804,8 +804,6 @@ class ListaListasUsuariosLibros{
         console.log(this);
     }
 
-    
-
     mostrarListaUsuarios(){
         var temporal = this.cabeza;
         while (temporal != null){
@@ -911,8 +909,6 @@ class ListaListasUsuariosLibros{
         return resultado
 
     }
-
-
 }
 
 class ListaLibros{
@@ -1435,7 +1431,6 @@ class ColaEspera{
 
 //#endregion
 
-
 //#region Funciones de Tablas
 function crearTablaUsuarios(){
     var element = document.getElementById("tabla-usuarios");
@@ -1637,7 +1632,7 @@ function crearPodioLibros(){
         }
 
         textoHTML += `<TD><center> `+imagen+` <br><b>Libro: </b>` +temporal.libro.nombre_libro+
-        `<br><b>Libros comprados: </b> ` + listaListasUsuarios.cantEjemplaresVendidos(temporal.libro.nombre_libro)+`<br></center></TD>`;
+        `<br><b>Ejemplares vendidos: </b> ` + listaListasUsuarios.cantEjemplaresVendidos(temporal.libro.nombre_libro)+`<br></center></TD>`;
 
         
         temporal = temporal.siguiente;
@@ -1736,7 +1731,6 @@ function llenarTopLibros() {
 }
 
 //#endregion
-
 
 //#region ordenamientos
 function ordenBurbuja(_lista) {
@@ -1840,7 +1834,6 @@ function llenarMatrices() {
 
 //#endregion
 
-
 //#region Variables y estructuras a Utilizar
 
 var listaLibros = new ListaLibros();
@@ -1860,7 +1853,6 @@ var btn = document.getElementById("btn-logout")
 btn.style.display = "none";
 
 //#endregion
-
 
 //#region Manejo de Botones 
 
