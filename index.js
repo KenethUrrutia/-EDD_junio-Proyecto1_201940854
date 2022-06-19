@@ -1228,7 +1228,6 @@ class ArbolAutores{
 
     }
 
-
     mostrar(){
        console.log( this.mostrarInOrden(this.raiz));
     }
@@ -1287,7 +1286,6 @@ class ArbolAutores{
 
     }
     
-
     tablaInOrden(nodo){
         
         if(nodo.izquierda!=null){
