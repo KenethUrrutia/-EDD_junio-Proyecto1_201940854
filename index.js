@@ -1362,6 +1362,9 @@ class ColaEspera{
     desencolar(){
         if (this.primero != null) {
             this.primero = this.primero.atras;
+            if (this.primero == null) {
+                this.ultimo = null;
+            }
         }
     }
     
