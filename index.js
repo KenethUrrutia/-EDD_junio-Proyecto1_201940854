@@ -1333,6 +1333,7 @@ class ArbolAutores{
 }
 
 class ColaEspera{
+    
     constructor(){
         this.primero = null;
         this.ultimo =  null;
