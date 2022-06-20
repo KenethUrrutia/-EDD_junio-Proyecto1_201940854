@@ -92,7 +92,6 @@ class ListaDispersa {
         this.ultimo = null;
     }
 
-    //busqueda
     busquedaCol(col) {
         var temp = this.primero
         while (temp != null) {
@@ -114,7 +113,6 @@ class ListaDispersa {
         return null
     }
 
-    //ordenar la lista de cabeceras
     ordenarCol(nodo){
         var aux = this.primero
         while(aux != null){
@@ -139,7 +137,6 @@ class ListaDispersa {
         nodo.anterior = this.ultimo;
         this.ultimo = nodo;
     }
-
     ordenarFila(nodo){
         var aux = this.primero
         while(aux != null){
@@ -165,15 +162,12 @@ class ListaDispersa {
         this.ultimo = nodo;
     }
 
-    //insertar en lista
     insertarCol(col){
         var nodo = new NodoMatrizD(null,col,0);
-        //quiere decir que no hay nada en esa lista
         if (this.primero == null){
             this.primero = this.ultimo = nodo;
             return;
         }
-        //no es el primero en la lista entonces lo ingreso ordenadamente
         this.ordenarCol(nodo);
     }
     insertarFila(fila){
@@ -218,9 +212,7 @@ class MatrizDispersa{
         var nodoFila = this.lista_vertical.busquedaFila(fila)
         console.log(`Caso 1 Fila` + fila);
         var nuevo = new NodoMatriz(libro,col,fila);
-        //enlazar con cabeceras en col
         nodoCol.abajo = nuevo;
-        //enlazar con cabeceras en fila
         nodoFila.siguiente = nuevo;
 
 
@@ -374,7 +366,7 @@ class MatrizDispersa{
         while (temFila != null) {
             if (temFila.abajo != null) {
                  
-                conexiones += `C0F`+temFila.fila + ` -> ` + `C0F`+temFila.abajo.fila+`; `;
+                conexiones += `C0F`+temFila.fila + ` -> ` + `C0F`+temFila.abajo.fila+` [dir=both]; `;
             }
             temFila = temFila.abajo
         }
@@ -385,7 +377,7 @@ class MatrizDispersa{
 
             var rankCol = `{ rank = same; C`+temporalCol.col + `; `;
             if (temporalCol.siguiente != null) {
-                conexiones += `C`+temporalCol.col + ` -> C` + temporalCol.siguiente.col + `;\n`
+                conexiones += `C`+temporalCol.col + ` -> C` + temporalCol.siguiente.col + `[dir=both];\n`
                 
                 temporalLibro = temporalCol.abajo;
 
@@ -401,20 +393,20 @@ class MatrizDispersa{
                     if (temporalLibro.anterior == null) {
                         etiquetas += `C0F`+ temporalFila.fila +`[label = "`+ temporalFila.fila +`"  group=`+temporalFila.fila+`]; \n`
                         rankFila += `C0F`+temporalFila.fila + `;`;
-                        conexiones += `C0F`+temporalFila.fila + ` -> ` + `C`+temporalCol.col+`F`+temporalLibro.fila+`; \n `;
+                        conexiones += `C0F`+temporalFila.fila + ` -> ` + `C`+temporalCol.col+`F`+temporalLibro.fila+` [dir=both];\n `;
                     } else{
                         rankFila += `C0F`+temporalFila.fila + `;`;
                         etiquetas += `C0F`+ temporalFila.fila +`[label = "`+ temporalFila.fila +`"  group=`+temporalFila.fila+`]; \n`
 
-                        conexiones +=  `C`+temporalLibro.anterior.col+ `F`+temporalLibro.fila + ` -> ` + `C`+temporalLibro.col+`F`+temporalLibro.fila+`; \n`;
+                        conexiones +=  `C`+temporalLibro.anterior.col+ `F`+temporalLibro.fila + ` -> ` + `C`+temporalLibro.col+`F`+temporalLibro.fila+` [dir=both];\n`;
                     }
                     if (temporalLibro.siguiente != null) {
-                        conexiones +=  `C`+temporalLibro.col+ `F`+temporalLibro.fila + ` -> ` + `C`+temporalLibro.siguiente.col+`F`+temporalLibro.fila+`; \n`;
+                        conexiones +=  `C`+temporalLibro.col+ `F`+temporalLibro.fila + ` -> ` + `C`+temporalLibro.siguiente.col+`F`+temporalLibro.fila+`[dir=both]; \n`;
                     }
 
                     if (temporalLibro.abajo != null) {
                         
-                        conexiones += `C`+temporalCol.col+`F`+temporalLibro.fila +` -> C`+temporalCol.col+`F`+(temporalLibro.abajo.fila) +`;\n`
+                        conexiones += `C`+temporalCol.col+`F`+temporalLibro.fila +` -> C`+temporalCol.col+`F`+(temporalLibro.abajo.fila) +` [dir=both];\n`
 
                     }  
 
@@ -440,12 +432,12 @@ class MatrizDispersa{
 
                     if (temporalCol.siguiente != null) {
                         
-                        conexiones += `C`+temporalCol.col+`F`+temporalLibro.fila +` -> C`+temporalCol.siguiente.col+`F`+temporalLibro.fila +`;\n`
+                        conexiones += `C`+temporalCol.col+`F`+temporalLibro.fila +` -> C`+temporalCol.siguiente.col+`F`+temporalLibro.fila +` [dir=both];\n`
 
                     } 
                     if (temporalLibro.abajo != null) {
                         
-                        conexiones += `C`+temporalCol.col+`F`+temporalLibro.fila +` -> C`+temporalCol.col+`F`+(temporalLibro.abajo.fila) +`;\n`
+                        conexiones += `C`+temporalCol.col+`F`+temporalLibro.fila +` -> C`+temporalCol.col+`F`+(temporalLibro.abajo.fila) +` [dir=both];\n`
 
                     }  
 
@@ -460,7 +452,7 @@ class MatrizDispersa{
 
             
             
-            conexiones += `C`+temporalCol.col +` -> C`+temporalCol.col+`F`+temporalCol.abajo.fila +`;\n`
+            conexiones += `C`+temporalCol.col +` -> C`+temporalCol.col+`F`+temporalCol.abajo.fila +` [dir=both];\n`
 
             ranks += rankCol + `}\n\n`;
 
@@ -527,7 +519,6 @@ class IndiceMatrizOrtogonal{
     
 
     }
-
 
     buscarlista(_buscar){
         var temporal = this.cabeza
